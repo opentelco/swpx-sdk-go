@@ -375,6 +375,8 @@ type SessionRequest struct {
 	// network_region is used to send the request to the right pollers
 	// each poller group is separted by network_regions and contacts the network
 	// elements in that region.
+	//
+	// !! If the wrong region is used the request will be forwarded to the default region.
 	NetworkRegion string `protobuf:"bytes,3,opt,name=network_region,json=networkRegion,proto3" json:"network_region,omitempty" bson:"network_region"`
 }
 
