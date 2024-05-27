@@ -29,8 +29,8 @@ package corepb
 
 import (
 	context "context"
-	analysispb "go.opentelco.io/go-swpx/proto/go/analysispb"
-	stanzapb "go.opentelco.io/go-swpx/proto/go/stanzapb"
+	analysispb "go.opentelco.io/swpx-sdk-go/analysispb"
+	stanzapb "go.opentelco.io/swpx-sdk-go/stanzapb"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"

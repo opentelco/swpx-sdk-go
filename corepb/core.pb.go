@@ -28,9 +28,9 @@
 package corepb
 
 import (
-	analysispb "go.opentelco.io/go-swpx/proto/go/analysispb"
-	devicepb "go.opentelco.io/go-swpx/proto/go/devicepb"
-	stanzapb "go.opentelco.io/go-swpx/proto/go/stanzapb"
+	analysispb "go.opentelco.io/swpx-sdk-go/analysispb"
+	devicepb "go.opentelco.io/swpx-sdk-go/devicepb"
+	stanzapb "go.opentelco.io/swpx-sdk-go/stanzapb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
