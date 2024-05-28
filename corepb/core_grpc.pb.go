@@ -71,22 +71,20 @@ func (c *pluginsClient) List(ctx context.Context, in *ListPluginsRequest, opts .
 }
 
 // PluginsServer is the server API for Plugins service.
-// All implementations must embed UnimplementedPluginsServer
+// All implementations should embed UnimplementedPluginsServer
 // for forward compatibility
 type PluginsServer interface {
 	// GetPlugins returns a list of all plugins that are available in the system
 	List(context.Context, *ListPluginsRequest) (*ListPluginsResponse, error)
-	mustEmbedUnimplementedPluginsServer()
 }
 
-// UnimplementedPluginsServer must be embedded to have forward compatible implementations.
+// UnimplementedPluginsServer should be embedded to have forward compatible implementations.
 type UnimplementedPluginsServer struct {
 }
 
 func (UnimplementedPluginsServer) List(context.Context, *ListPluginsRequest) (*ListPluginsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
 }
-func (UnimplementedPluginsServer) mustEmbedUnimplementedPluginsServer() {}
 
 // UnsafePluginsServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to PluginsServer will
@@ -205,7 +203,7 @@ func (c *diagnosticsClient) ListDiagnostics(ctx context.Context, in *ListDiagnos
 }
 
 // DiagnosticsServer is the server API for Diagnostics service.
-// All implementations must embed UnimplementedDiagnosticsServer
+// All implementations should embed UnimplementedDiagnosticsServer
 // for forward compatibility
 type DiagnosticsServer interface {
 	// RunDiagnostic is used to run a diagnostic on a network element or a specific port on the network element
@@ -222,10 +220,9 @@ type DiagnosticsServer interface {
 	GetDiagnostic(context.Context, *GetDiagnosticRequest) (*analysispb.Report, error)
 	// ListDiagnostics returns a list of diagnostics that has been run on a network element or a specific port on the network element
 	ListDiagnostics(context.Context, *ListDiagnosticsRequest) (*ListDiagnosticsResponse, error)
-	mustEmbedUnimplementedDiagnosticsServer()
 }
 
-// UnimplementedDiagnosticsServer must be embedded to have forward compatible implementations.
+// UnimplementedDiagnosticsServer should be embedded to have forward compatible implementations.
 type UnimplementedDiagnosticsServer struct {
 }
 
@@ -241,7 +238,6 @@ func (UnimplementedDiagnosticsServer) GetDiagnostic(context.Context, *GetDiagnos
 func (UnimplementedDiagnosticsServer) ListDiagnostics(context.Context, *ListDiagnosticsRequest) (*ListDiagnosticsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListDiagnostics not implemented")
 }
-func (UnimplementedDiagnosticsServer) mustEmbedUnimplementedDiagnosticsServer() {}
 
 // UnsafeDiagnosticsServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to DiagnosticsServer will
@@ -375,7 +371,7 @@ type PollerClient interface {
 	// this does not imply that the network element is working correctly or that it is configured correctly but
 	// that it is responding to requests and that the poller can connect to it over SNMP/ICMP
 	// the availability also verifys checking that hostname is resolvable (if hostname is used in the request)
-	CheckAvailability(ctx context.Context, in *SessionRequest, opts ...grpc.CallOption) (*CheckAvailabilityResponse, error)
+	CheckAvailability(ctx context.Context, in *CheckAvailabilityRequest, opts ...grpc.CallOption) (*CheckAvailabilityResponse, error)
 	// GetDeviceInformation returns the technical information about a device
 	// port etc is not considered in this request
 	CollectDeviceInformation(ctx context.Context, in *CollectDeviceInformationRequest, opts ...grpc.CallOption) (*DeviceInformationResponse, error)
@@ -429,7 +425,7 @@ func (c *pollerClient) Discover(ctx context.Context, in *DiscoverRequest, opts .
 	return out, nil
 }
 
-func (c *pollerClient) CheckAvailability(ctx context.Context, in *SessionRequest, opts ...grpc.CallOption) (*CheckAvailabilityResponse, error) {
+func (c *pollerClient) CheckAvailability(ctx context.Context, in *CheckAvailabilityRequest, opts ...grpc.CallOption) (*CheckAvailabilityResponse, error) {
 	out := new(CheckAvailabilityResponse)
 	err := c.cc.Invoke(ctx, Poller_CheckAvailability_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -484,7 +480,7 @@ func (c *pollerClient) CollectConfig(ctx context.Context, in *CollectConfigReque
 }
 
 // PollerServer is the server API for Poller service.
-// All implementations must embed UnimplementedPollerServer
+// All implementations should embed UnimplementedPollerServer
 // for forward compatibility
 type PollerServer interface {
 	// Discover is used to get basic information about an network element, used to make a quick check of the device
@@ -494,7 +490,7 @@ type PollerServer interface {
 	// this does not imply that the network element is working correctly or that it is configured correctly but
 	// that it is responding to requests and that the poller can connect to it over SNMP/ICMP
 	// the availability also verifys checking that hostname is resolvable (if hostname is used in the request)
-	CheckAvailability(context.Context, *SessionRequest) (*CheckAvailabilityResponse, error)
+	CheckAvailability(context.Context, *CheckAvailabilityRequest) (*CheckAvailabilityResponse, error)
 	// GetDeviceInformation returns the technical information about a device
 	// port etc is not considered in this request
 	CollectDeviceInformation(context.Context, *CollectDeviceInformationRequest) (*DeviceInformationResponse, error)
@@ -529,17 +525,16 @@ type PollerServer interface {
 	// CollectConfig collects the configuration of a network element check for any changes between the stored config and the
 	// collected one. Returs a list of changes and the config collected from the network element
 	CollectConfig(context.Context, *CollectConfigRequest) (*CollectConfigResponse, error)
-	mustEmbedUnimplementedPollerServer()
 }
 
-// UnimplementedPollerServer must be embedded to have forward compatible implementations.
+// UnimplementedPollerServer should be embedded to have forward compatible implementations.
 type UnimplementedPollerServer struct {
 }
 
 func (UnimplementedPollerServer) Discover(context.Context, *DiscoverRequest) (*DiscoverResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Discover not implemented")
 }
-func (UnimplementedPollerServer) CheckAvailability(context.Context, *SessionRequest) (*CheckAvailabilityResponse, error) {
+func (UnimplementedPollerServer) CheckAvailability(context.Context, *CheckAvailabilityRequest) (*CheckAvailabilityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckAvailability not implemented")
 }
 func (UnimplementedPollerServer) CollectDeviceInformation(context.Context, *CollectDeviceInformationRequest) (*DeviceInformationResponse, error) {
@@ -557,7 +552,6 @@ func (UnimplementedPollerServer) CollectBasicPortInformation(context.Context, *C
 func (UnimplementedPollerServer) CollectConfig(context.Context, *CollectConfigRequest) (*CollectConfigResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CollectConfig not implemented")
 }
-func (UnimplementedPollerServer) mustEmbedUnimplementedPollerServer() {}
 
 // UnsafePollerServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to PollerServer will
@@ -589,7 +583,7 @@ func _Poller_Discover_Handler(srv interface{}, ctx context.Context, dec func(int
 }
 
 func _Poller_CheckAvailability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SessionRequest)
+	in := new(CheckAvailabilityRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -601,7 +595,7 @@ func _Poller_CheckAvailability_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: Poller_CheckAvailability_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PollerServer).CheckAvailability(ctx, req.(*SessionRequest))
+		return srv.(PollerServer).CheckAvailability(ctx, req.(*CheckAvailabilityRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -766,22 +760,20 @@ func (c *commanderClient) ConfigureStanza(ctx context.Context, in *ConfigureStan
 }
 
 // CommanderServer is the server API for Commander service.
-// All implementations must embed UnimplementedCommanderServer
+// All implementations should embed UnimplementedCommanderServer
 // for forward compatibility
 type CommanderServer interface {
 	// configure a configuration stanza on a network element
 	ConfigureStanza(context.Context, *ConfigureStanzaRequest) (*stanzapb.ConfigureResponse, error)
-	mustEmbedUnimplementedCommanderServer()
 }
 
-// UnimplementedCommanderServer must be embedded to have forward compatible implementations.
+// UnimplementedCommanderServer should be embedded to have forward compatible implementations.
 type UnimplementedCommanderServer struct {
 }
 
 func (UnimplementedCommanderServer) ConfigureStanza(context.Context, *ConfigureStanzaRequest) (*stanzapb.ConfigureResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfigureStanza not implemented")
 }
-func (UnimplementedCommanderServer) mustEmbedUnimplementedCommanderServer() {}
 
 // UnsafeCommanderServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to CommanderServer will
