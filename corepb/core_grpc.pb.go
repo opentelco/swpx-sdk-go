@@ -351,6 +351,8 @@ var Diagnostics_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
+	Poller_RequestTerminal_FullMethodName               = "/core.Poller/RequestTerminal"
+	Poller_OpenTerminal_FullMethodName                  = "/core.Poller/OpenTerminal"
 	Poller_Discover_FullMethodName                      = "/core.Poller/Discover"
 	Poller_CheckAvailability_FullMethodName             = "/core.Poller/CheckAvailability"
 	Poller_CollectDeviceInformation_FullMethodName      = "/core.Poller/CollectDeviceInformation"
@@ -364,6 +366,12 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PollerClient interface {
+	// RequestTerminal is used to request a terminal on a network element to run commands on the network element
+	// it returns a gRRPC stream endpoint that the client to connect to and run commands on the network element
+	RequestTerminal(ctx context.Context, in *RequestTerminalRequest, opts ...grpc.CallOption) (*RequestTerminalResponse, error)
+	// open the terminal that was created by the rpc RequestTerminal
+	// to open the correct terminal the id of the terminal should be provided in the headers with the key "terminal-id" and the value of the id
+	OpenTerminal(ctx context.Context, opts ...grpc.CallOption) (Poller_OpenTerminalClient, error)
 	// Discover is used to get basic information about an network element, used to make a quick check of the device
 	// using the generic resource plugin to make request through resource.GetDeiceInformation
 	Discover(ctx context.Context, in *DiscoverRequest, opts ...grpc.CallOption) (*DiscoverResponse, error)
@@ -414,6 +422,46 @@ type pollerClient struct {
 
 func NewPollerClient(cc grpc.ClientConnInterface) PollerClient {
 	return &pollerClient{cc}
+}
+
+func (c *pollerClient) RequestTerminal(ctx context.Context, in *RequestTerminalRequest, opts ...grpc.CallOption) (*RequestTerminalResponse, error) {
+	out := new(RequestTerminalResponse)
+	err := c.cc.Invoke(ctx, Poller_RequestTerminal_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pollerClient) OpenTerminal(ctx context.Context, opts ...grpc.CallOption) (Poller_OpenTerminalClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Poller_ServiceDesc.Streams[0], Poller_OpenTerminal_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &pollerOpenTerminalClient{stream}
+	return x, nil
+}
+
+type Poller_OpenTerminalClient interface {
+	Send(*TerminalInput) error
+	Recv() (*TerminalOutput, error)
+	grpc.ClientStream
+}
+
+type pollerOpenTerminalClient struct {
+	grpc.ClientStream
+}
+
+func (x *pollerOpenTerminalClient) Send(m *TerminalInput) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *pollerOpenTerminalClient) Recv() (*TerminalOutput, error) {
+	m := new(TerminalOutput)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func (c *pollerClient) Discover(ctx context.Context, in *DiscoverRequest, opts ...grpc.CallOption) (*DiscoverResponse, error) {
@@ -483,6 +531,12 @@ func (c *pollerClient) CollectConfig(ctx context.Context, in *CollectConfigReque
 // All implementations should embed UnimplementedPollerServer
 // for forward compatibility
 type PollerServer interface {
+	// RequestTerminal is used to request a terminal on a network element to run commands on the network element
+	// it returns a gRRPC stream endpoint that the client to connect to and run commands on the network element
+	RequestTerminal(context.Context, *RequestTerminalRequest) (*RequestTerminalResponse, error)
+	// open the terminal that was created by the rpc RequestTerminal
+	// to open the correct terminal the id of the terminal should be provided in the headers with the key "terminal-id" and the value of the id
+	OpenTerminal(Poller_OpenTerminalServer) error
 	// Discover is used to get basic information about an network element, used to make a quick check of the device
 	// using the generic resource plugin to make request through resource.GetDeiceInformation
 	Discover(context.Context, *DiscoverRequest) (*DiscoverResponse, error)
@@ -531,6 +585,12 @@ type PollerServer interface {
 type UnimplementedPollerServer struct {
 }
 
+func (UnimplementedPollerServer) RequestTerminal(context.Context, *RequestTerminalRequest) (*RequestTerminalResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestTerminal not implemented")
+}
+func (UnimplementedPollerServer) OpenTerminal(Poller_OpenTerminalServer) error {
+	return status.Errorf(codes.Unimplemented, "method OpenTerminal not implemented")
+}
 func (UnimplementedPollerServer) Discover(context.Context, *DiscoverRequest) (*DiscoverResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Discover not implemented")
 }
@@ -562,6 +622,50 @@ type UnsafePollerServer interface {
 
 func RegisterPollerServer(s grpc.ServiceRegistrar, srv PollerServer) {
 	s.RegisterService(&Poller_ServiceDesc, srv)
+}
+
+func _Poller_RequestTerminal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestTerminalRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PollerServer).RequestTerminal(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Poller_RequestTerminal_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PollerServer).RequestTerminal(ctx, req.(*RequestTerminalRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Poller_OpenTerminal_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(PollerServer).OpenTerminal(&pollerOpenTerminalServer{stream})
+}
+
+type Poller_OpenTerminalServer interface {
+	Send(*TerminalOutput) error
+	Recv() (*TerminalInput, error)
+	grpc.ServerStream
+}
+
+type pollerOpenTerminalServer struct {
+	grpc.ServerStream
+}
+
+func (x *pollerOpenTerminalServer) Send(m *TerminalOutput) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *pollerOpenTerminalServer) Recv() (*TerminalInput, error) {
+	m := new(TerminalInput)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func _Poller_Discover_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -698,6 +802,10 @@ var Poller_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*PollerServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "RequestTerminal",
+			Handler:    _Poller_RequestTerminal_Handler,
+		},
+		{
 			MethodName: "Discover",
 			Handler:    _Poller_Discover_Handler,
 		},
@@ -726,7 +834,14 @@ var Poller_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Poller_CollectConfig_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "OpenTerminal",
+			Handler:       _Poller_OpenTerminal_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "core.proto",
 }
 
