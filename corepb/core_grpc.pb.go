@@ -370,7 +370,10 @@ type PollerClient interface {
 	// it returns a gRRPC stream endpoint that the client to connect to and run commands on the network element
 	RequestTerminal(ctx context.Context, in *RequestTerminalRequest, opts ...grpc.CallOption) (*RequestTerminalResponse, error)
 	// open the terminal that was created by the rpc RequestTerminal
-	// to open the correct terminal the id of the terminal should be provided in the headers with the key "terminal-id" and the value of the id
+	// the terminal is a gRPC stream that the client can connect to and send commands to the network device
+	// to connect headers needs to be added to the request
+	//   - stream-id: the ID of the created session (returned by the Request Terminal)
+	//   - stream-addr: the address of the agent that the Poller needs to connect to
 	OpenTerminal(ctx context.Context, opts ...grpc.CallOption) (Poller_OpenTerminalClient, error)
 	// Discover is used to get basic information about an network element, used to make a quick check of the device
 	// using the generic resource plugin to make request through resource.GetDeiceInformation
@@ -535,7 +538,10 @@ type PollerServer interface {
 	// it returns a gRRPC stream endpoint that the client to connect to and run commands on the network element
 	RequestTerminal(context.Context, *RequestTerminalRequest) (*RequestTerminalResponse, error)
 	// open the terminal that was created by the rpc RequestTerminal
-	// to open the correct terminal the id of the terminal should be provided in the headers with the key "terminal-id" and the value of the id
+	// the terminal is a gRPC stream that the client can connect to and send commands to the network device
+	// to connect headers needs to be added to the request
+	//   - stream-id: the ID of the created session (returned by the Request Terminal)
+	//   - stream-addr: the address of the agent that the Poller needs to connect to
 	OpenTerminal(Poller_OpenTerminalServer) error
 	// Discover is used to get basic information about an network element, used to make a quick check of the device
 	// using the generic resource plugin to make request through resource.GetDeiceInformation
