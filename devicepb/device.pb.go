@@ -2206,6 +2206,135 @@ func (x *PortIndex) GetPorts() map[string]*PortIndexEntity {
 	return nil
 }
 
+type PortSignature struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// the port (e.g. GigabitEthernet0/0/0)
+	Port string `protobuf:"bytes,1,opt,name=port,proto3" json:"port,omitempty" bson:"port"`
+	// snmp index (IF-MIB)
+	Index *int64 `protobuf:"varint,2,opt,name=index,proto3,oneof" json:"index,omitempty" bson:"index"`
+	// snmp physical index (IF-ENTITY-MIB)
+	IndexPhysical *int64 `protobuf:"varint,3,opt,name=index_physical,json=indexPhysical,proto3,oneof" json:"index_physical,omitempty" bson:"index_physical"`
+	// the desired state of the port
+	AdminStatus Port_Status `protobuf:"varint,4,opt,name=admin_status,json=adminStatus,proto3,enum=device.Port_Status" json:"admin_status,omitempty" bson:"admin_status"`
+	// the current state of the port
+	OperationalStatus Port_Status `protobuf:"varint,5,opt,name=operational_status,json=operationalStatus,proto3,enum=device.Port_Status" json:"operational_status,omitempty" bson:"operational_status"`
+	// mac address of the port
+	MacAddress *string `protobuf:"bytes,6,opt,name=mac_address,json=macAddress,proto3,oneof" json:"mac_address,omitempty" bson:"mac_address"`
+	// last time the port was changed (link etc)
+	LastChanged *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=last_changed,json=lastChanged,proto3" json:"last_changed,omitempty" bson:"last_changed"`
+	// current egotiated speed of the port
+	Speed int64 `protobuf:"varint,8,opt,name=speed,proto3" json:"speed,omitempty" bson:"speed"`
+	// mac addresses registered on the port
+	MacAddressTable []*MACEntry `protobuf:"bytes,9,rep,name=mac_address_table,json=macAddressTable,proto3" json:"mac_address_table,omitempty" bson:"mac_address_table"`
+	// dhcp entries registered on the port
+	DhcpTable []*DHCPEntry `protobuf:"bytes,10,rep,name=dhcp_table,json=dhcpTable,proto3" json:"dhcp_table,omitempty" bson:"dhcp_table"`
+}
+
+func (x *PortSignature) Reset() {
+	*x = PortSignature{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_device_proto_msgTypes[11]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PortSignature) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PortSignature) ProtoMessage() {}
+
+func (x *PortSignature) ProtoReflect() protoreflect.Message {
+	mi := &file_device_proto_msgTypes[11]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PortSignature.ProtoReflect.Descriptor instead.
+func (*PortSignature) Descriptor() ([]byte, []int) {
+	return file_device_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *PortSignature) GetPort() string {
+	if x != nil {
+		return x.Port
+	}
+	return ""
+}
+
+func (x *PortSignature) GetIndex() int64 {
+	if x != nil && x.Index != nil {
+		return *x.Index
+	}
+	return 0
+}
+
+func (x *PortSignature) GetIndexPhysical() int64 {
+	if x != nil && x.IndexPhysical != nil {
+		return *x.IndexPhysical
+	}
+	return 0
+}
+
+func (x *PortSignature) GetAdminStatus() Port_Status {
+	if x != nil {
+		return x.AdminStatus
+	}
+	return Port_unset
+}
+
+func (x *PortSignature) GetOperationalStatus() Port_Status {
+	if x != nil {
+		return x.OperationalStatus
+	}
+	return Port_unset
+}
+
+func (x *PortSignature) GetMacAddress() string {
+	if x != nil && x.MacAddress != nil {
+		return *x.MacAddress
+	}
+	return ""
+}
+
+func (x *PortSignature) GetLastChanged() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LastChanged
+	}
+	return nil
+}
+
+func (x *PortSignature) GetSpeed() int64 {
+	if x != nil {
+		return x.Speed
+	}
+	return 0
+}
+
+func (x *PortSignature) GetMacAddressTable() []*MACEntry {
+	if x != nil {
+		return x.MacAddressTable
+	}
+	return nil
+}
+
+func (x *PortSignature) GetDhcpTable() []*DHCPEntry {
+	if x != nil {
+		return x.DhcpTable
+	}
+	return nil
+}
+
 type Device_Slot struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2220,7 +2349,7 @@ type Device_Slot struct {
 func (x *Device_Slot) Reset() {
 	*x = Device_Slot{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_device_proto_msgTypes[11]
+		mi := &file_device_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2233,7 +2362,7 @@ func (x *Device_Slot) String() string {
 func (*Device_Slot) ProtoMessage() {}
 
 func (x *Device_Slot) ProtoReflect() protoreflect.Message {
-	mi := &file_device_proto_msgTypes[11]
+	mi := &file_device_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2277,7 +2406,7 @@ type Device_Module struct {
 func (x *Device_Module) Reset() {
 	*x = Device_Module{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_device_proto_msgTypes[12]
+		mi := &file_device_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2290,7 +2419,7 @@ func (x *Device_Module) String() string {
 func (*Device_Module) ProtoMessage() {}
 
 func (x *Device_Module) ProtoReflect() protoreflect.Message {
-	mi := &file_device_proto_msgTypes[12]
+	mi := &file_device_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2333,7 +2462,7 @@ type Port_Statistics struct {
 func (x *Port_Statistics) Reset() {
 	*x = Port_Statistics{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_device_proto_msgTypes[13]
+		mi := &file_device_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2346,7 +2475,7 @@ func (x *Port_Statistics) String() string {
 func (*Port_Statistics) ProtoMessage() {}
 
 func (x *Port_Statistics) ProtoReflect() protoreflect.Message {
-	mi := &file_device_proto_msgTypes[13]
+	mi := &file_device_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2401,7 +2530,7 @@ type Port_Statistics_Metrics struct {
 func (x *Port_Statistics_Metrics) Reset() {
 	*x = Port_Statistics_Metrics{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_device_proto_msgTypes[14]
+		mi := &file_device_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2414,7 +2543,7 @@ func (x *Port_Statistics_Metrics) String() string {
 func (*Port_Statistics_Metrics) ProtoMessage() {}
 
 func (x *Port_Statistics_Metrics) ProtoReflect() protoreflect.Message {
-	mi := &file_device_proto_msgTypes[14]
+	mi := &file_device_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2502,7 +2631,7 @@ type Transceiver_Statistics struct {
 func (x *Transceiver_Statistics) Reset() {
 	*x = Transceiver_Statistics{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_device_proto_msgTypes[15]
+		mi := &file_device_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2515,7 +2644,7 @@ func (x *Transceiver_Statistics) String() string {
 func (*Transceiver_Statistics) ProtoMessage() {}
 
 func (x *Transceiver_Statistics) ProtoReflect() protoreflect.Message {
-	mi := &file_device_proto_msgTypes[15]
+	mi := &file_device_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3121,10 +3250,42 @@ var file_device_proto_rawDesc = []byte{
 	0x2d, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17,
 	0x2e, 0x64, 0x65, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x50, 0x6f, 0x72, 0x74, 0x49, 0x6e, 0x64, 0x65,
 	0x78, 0x45, 0x6e, 0x74, 0x69, 0x74, 0x79, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02,
-	0x38, 0x01, 0x42, 0x2b, 0x5a, 0x29, 0x67, 0x6f, 0x2e, 0x6f, 0x70, 0x65, 0x6e, 0x74, 0x65, 0x6c,
-	0x63, 0x6f, 0x2e, 0x69, 0x6f, 0x2f, 0x67, 0x6f, 0x2d, 0x73, 0x77, 0x70, 0x78, 0x2f, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x2f, 0x67, 0x6f, 0x2f, 0x64, 0x65, 0x76, 0x69, 0x63, 0x65, 0x70, 0x62, 0x62,
-	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x38, 0x01, 0x22, 0xfe, 0x03, 0x0a, 0x0d, 0x50, 0x6f, 0x72, 0x74, 0x53, 0x69, 0x67, 0x6e, 0x61,
+	0x74, 0x75, 0x72, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x70, 0x6f, 0x72, 0x74, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x04, 0x70, 0x6f, 0x72, 0x74, 0x12, 0x19, 0x0a, 0x05, 0x69, 0x6e, 0x64, 0x65,
+	0x78, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x48, 0x00, 0x52, 0x05, 0x69, 0x6e, 0x64, 0x65, 0x78,
+	0x88, 0x01, 0x01, 0x12, 0x2a, 0x0a, 0x0e, 0x69, 0x6e, 0x64, 0x65, 0x78, 0x5f, 0x70, 0x68, 0x79,
+	0x73, 0x69, 0x63, 0x61, 0x6c, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x48, 0x01, 0x52, 0x0d, 0x69,
+	0x6e, 0x64, 0x65, 0x78, 0x50, 0x68, 0x79, 0x73, 0x69, 0x63, 0x61, 0x6c, 0x88, 0x01, 0x01, 0x12,
+	0x36, 0x0a, 0x0c, 0x61, 0x64, 0x6d, 0x69, 0x6e, 0x5f, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18,
+	0x04, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x13, 0x2e, 0x64, 0x65, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x50,
+	0x6f, 0x72, 0x74, 0x2e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x0b, 0x61, 0x64, 0x6d, 0x69,
+	0x6e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x42, 0x0a, 0x12, 0x6f, 0x70, 0x65, 0x72, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x61, 0x6c, 0x5f, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x05, 0x20,
+	0x01, 0x28, 0x0e, 0x32, 0x13, 0x2e, 0x64, 0x65, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x50, 0x6f, 0x72,
+	0x74, 0x2e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x11, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x61, 0x6c, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x24, 0x0a, 0x0b, 0x6d,
+	0x61, 0x63, 0x5f, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09,
+	0x48, 0x02, 0x52, 0x0a, 0x6d, 0x61, 0x63, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x88, 0x01,
+	0x01, 0x12, 0x3d, 0x0a, 0x0c, 0x6c, 0x61, 0x73, 0x74, 0x5f, 0x63, 0x68, 0x61, 0x6e, 0x67, 0x65,
+	0x64, 0x18, 0x07, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65,
+	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74,
+	0x61, 0x6d, 0x70, 0x52, 0x0b, 0x6c, 0x61, 0x73, 0x74, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x64,
+	0x12, 0x14, 0x0a, 0x05, 0x73, 0x70, 0x65, 0x65, 0x64, 0x18, 0x08, 0x20, 0x01, 0x28, 0x03, 0x52,
+	0x05, 0x73, 0x70, 0x65, 0x65, 0x64, 0x12, 0x3c, 0x0a, 0x11, 0x6d, 0x61, 0x63, 0x5f, 0x61, 0x64,
+	0x64, 0x72, 0x65, 0x73, 0x73, 0x5f, 0x74, 0x61, 0x62, 0x6c, 0x65, 0x18, 0x09, 0x20, 0x03, 0x28,
+	0x0b, 0x32, 0x10, 0x2e, 0x64, 0x65, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4d, 0x41, 0x43, 0x45, 0x6e,
+	0x74, 0x72, 0x79, 0x52, 0x0f, 0x6d, 0x61, 0x63, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x54,
+	0x61, 0x62, 0x6c, 0x65, 0x12, 0x30, 0x0a, 0x0a, 0x64, 0x68, 0x63, 0x70, 0x5f, 0x74, 0x61, 0x62,
+	0x6c, 0x65, 0x18, 0x0a, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x11, 0x2e, 0x64, 0x65, 0x76, 0x69, 0x63,
+	0x65, 0x2e, 0x44, 0x48, 0x43, 0x50, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x09, 0x64, 0x68, 0x63,
+	0x70, 0x54, 0x61, 0x62, 0x6c, 0x65, 0x42, 0x08, 0x0a, 0x06, 0x5f, 0x69, 0x6e, 0x64, 0x65, 0x78,
+	0x42, 0x11, 0x0a, 0x0f, 0x5f, 0x69, 0x6e, 0x64, 0x65, 0x78, 0x5f, 0x70, 0x68, 0x79, 0x73, 0x69,
+	0x63, 0x61, 0x6c, 0x42, 0x0e, 0x0a, 0x0c, 0x5f, 0x6d, 0x61, 0x63, 0x5f, 0x61, 0x64, 0x64, 0x72,
+	0x65, 0x73, 0x73, 0x42, 0x2b, 0x5a, 0x29, 0x67, 0x6f, 0x2e, 0x6f, 0x70, 0x65, 0x6e, 0x74, 0x65,
+	0x6c, 0x63, 0x6f, 0x2e, 0x69, 0x6f, 0x2f, 0x67, 0x6f, 0x2d, 0x73, 0x77, 0x70, 0x78, 0x2f, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x67, 0x6f, 0x2f, 0x64, 0x65, 0x76, 0x69, 0x63, 0x65, 0x70, 0x62,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -3140,7 +3301,7 @@ func file_device_proto_rawDescGZIP() []byte {
 }
 
 var file_device_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_device_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
+var file_device_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_device_proto_goTypes = []interface{}{
 	(Device_Type)(0),                // 0: device.Device.Type
 	(Device_StackRole)(0),           // 1: device.Device.StackRole
@@ -3157,52 +3318,58 @@ var file_device_proto_goTypes = []interface{}{
 	(*PhysicalPortInformation)(nil), // 12: device.PhysicalPortInformation
 	(*PortIndexEntity)(nil),         // 13: device.PortIndexEntity
 	(*PortIndex)(nil),               // 14: device.PortIndex
-	(*Device_Slot)(nil),             // 15: device.Device.Slot
-	(*Device_Module)(nil),           // 16: device.Device.Module
-	(*Port_Statistics)(nil),         // 17: device.Port.Statistics
-	(*Port_Statistics_Metrics)(nil), // 18: device.Port.Statistics.Metrics
-	(*Transceiver_Statistics)(nil),  // 19: device.Transceiver.Statistics
-	nil,                             // 20: device.PortIndex.PortsEntry
-	(*timestamppb.Timestamp)(nil),   // 21: google.protobuf.Timestamp
-	(*trafficpolicypb.ConfiguredTrafficPolicy)(nil), // 22: traffic_policy.ConfiguredTrafficPolicy
-	(*trafficpolicypb.QOS)(nil),                     // 23: traffic_policy.QOS
+	(*PortSignature)(nil),           // 15: device.PortSignature
+	(*Device_Slot)(nil),             // 16: device.Device.Slot
+	(*Device_Module)(nil),           // 17: device.Device.Module
+	(*Port_Statistics)(nil),         // 18: device.Port.Statistics
+	(*Port_Statistics_Metrics)(nil), // 19: device.Port.Statistics.Metrics
+	(*Transceiver_Statistics)(nil),  // 20: device.Transceiver.Statistics
+	nil,                             // 21: device.PortIndex.PortsEntry
+	(*timestamppb.Timestamp)(nil),   // 22: google.protobuf.Timestamp
+	(*trafficpolicypb.ConfiguredTrafficPolicy)(nil), // 23: traffic_policy.ConfiguredTrafficPolicy
+	(*trafficpolicypb.QOS)(nil),                     // 24: traffic_policy.QOS
 }
 var file_device_proto_depIdxs = []int32{
 	0,  // 0: device.Device.type:type_name -> device.Device.Type
-	15, // 1: device.Device.slots:type_name -> device.Device.Slot
-	16, // 2: device.Device.modules:type_name -> device.Device.Module
+	16, // 1: device.Device.slots:type_name -> device.Device.Slot
+	17, // 2: device.Device.modules:type_name -> device.Device.Module
 	5,  // 3: device.Device.ports:type_name -> device.Port
 	7,  // 4: device.Device.aggregated_ports:type_name -> device.Aggregation
 	1,  // 5: device.Device.stack_role:type_name -> device.Device.StackRole
 	2,  // 6: device.Port.type:type_name -> device.Port.Type
 	3,  // 7: device.Port.admin_status:type_name -> device.Port.Status
 	3,  // 8: device.Port.operational_status:type_name -> device.Port.Status
-	21, // 9: device.Port.last_changed:type_name -> google.protobuf.Timestamp
-	17, // 10: device.Port.stats:type_name -> device.Port.Statistics
+	22, // 9: device.Port.last_changed:type_name -> google.protobuf.Timestamp
+	18, // 10: device.Port.stats:type_name -> device.Port.Statistics
 	9,  // 11: device.Port.transceiver:type_name -> device.Transceiver
 	6,  // 12: device.Port.neighbor:type_name -> device.Neighbor
 	10, // 13: device.Port.mac_address_table:type_name -> device.MACEntry
 	11, // 14: device.Port.dhcp_table:type_name -> device.DHCPEntry
-	22, // 15: device.Port.configuredTrafficPolicy:type_name -> traffic_policy.ConfiguredTrafficPolicy
-	23, // 16: device.Port.qos:type_name -> traffic_policy.QOS
-	21, // 17: device.Neighbor.timestamp:type_name -> google.protobuf.Timestamp
-	21, // 18: device.Aggregation.timestamp:type_name -> google.protobuf.Timestamp
+	23, // 15: device.Port.configuredTrafficPolicy:type_name -> traffic_policy.ConfiguredTrafficPolicy
+	24, // 16: device.Port.qos:type_name -> traffic_policy.QOS
+	22, // 17: device.Neighbor.timestamp:type_name -> google.protobuf.Timestamp
+	22, // 18: device.Aggregation.timestamp:type_name -> google.protobuf.Timestamp
 	5,  // 19: device.Aggregation.ports:type_name -> device.Port
 	9,  // 20: device.Transceivers.transceivers:type_name -> device.Transceiver
-	19, // 21: device.Transceiver.stats:type_name -> device.Transceiver.Statistics
-	21, // 22: device.DHCPEntry.lease:type_name -> google.protobuf.Timestamp
-	20, // 23: device.PortIndex.ports:type_name -> device.PortIndex.PortsEntry
-	4,  // 24: device.Device.Slot.device:type_name -> device.Device
-	4,  // 25: device.Device.Module.device:type_name -> device.Device
-	18, // 26: device.Port.Statistics.input:type_name -> device.Port.Statistics.Metrics
-	18, // 27: device.Port.Statistics.output:type_name -> device.Port.Statistics.Metrics
-	21, // 28: device.Transceiver.Statistics.timestamp:type_name -> google.protobuf.Timestamp
-	13, // 29: device.PortIndex.PortsEntry.value:type_name -> device.PortIndexEntity
-	30, // [30:30] is the sub-list for method output_type
-	30, // [30:30] is the sub-list for method input_type
-	30, // [30:30] is the sub-list for extension type_name
-	30, // [30:30] is the sub-list for extension extendee
-	0,  // [0:30] is the sub-list for field type_name
+	20, // 21: device.Transceiver.stats:type_name -> device.Transceiver.Statistics
+	22, // 22: device.DHCPEntry.lease:type_name -> google.protobuf.Timestamp
+	21, // 23: device.PortIndex.ports:type_name -> device.PortIndex.PortsEntry
+	3,  // 24: device.PortSignature.admin_status:type_name -> device.Port.Status
+	3,  // 25: device.PortSignature.operational_status:type_name -> device.Port.Status
+	22, // 26: device.PortSignature.last_changed:type_name -> google.protobuf.Timestamp
+	10, // 27: device.PortSignature.mac_address_table:type_name -> device.MACEntry
+	11, // 28: device.PortSignature.dhcp_table:type_name -> device.DHCPEntry
+	4,  // 29: device.Device.Slot.device:type_name -> device.Device
+	4,  // 30: device.Device.Module.device:type_name -> device.Device
+	19, // 31: device.Port.Statistics.input:type_name -> device.Port.Statistics.Metrics
+	19, // 32: device.Port.Statistics.output:type_name -> device.Port.Statistics.Metrics
+	22, // 33: device.Transceiver.Statistics.timestamp:type_name -> google.protobuf.Timestamp
+	13, // 34: device.PortIndex.PortsEntry.value:type_name -> device.PortIndexEntity
+	35, // [35:35] is the sub-list for method output_type
+	35, // [35:35] is the sub-list for method input_type
+	35, // [35:35] is the sub-list for extension type_name
+	35, // [35:35] is the sub-list for extension extendee
+	0,  // [0:35] is the sub-list for field type_name
 }
 
 func init() { file_device_proto_init() }
@@ -3344,7 +3511,7 @@ func file_device_proto_init() {
 			}
 		}
 		file_device_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Device_Slot); i {
+			switch v := v.(*PortSignature); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3356,7 +3523,7 @@ func file_device_proto_init() {
 			}
 		}
 		file_device_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Device_Module); i {
+			switch v := v.(*Device_Slot); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3368,7 +3535,7 @@ func file_device_proto_init() {
 			}
 		}
 		file_device_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Port_Statistics); i {
+			switch v := v.(*Device_Module); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3380,7 +3547,7 @@ func file_device_proto_init() {
 			}
 		}
 		file_device_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Port_Statistics_Metrics); i {
+			switch v := v.(*Port_Statistics); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3392,6 +3559,18 @@ func file_device_proto_init() {
 			}
 		}
 		file_device_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Port_Statistics_Metrics); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_device_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Transceiver_Statistics); i {
 			case 0:
 				return &v.state
@@ -3404,13 +3583,14 @@ func file_device_proto_init() {
 			}
 		}
 	}
+	file_device_proto_msgTypes[11].OneofWrappers = []interface{}{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_device_proto_rawDesc,
 			NumEnums:      4,
-			NumMessages:   17,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

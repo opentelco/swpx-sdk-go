@@ -353,11 +353,14 @@ var Diagnostics_ServiceDesc = grpc.ServiceDesc{
 const (
 	Poller_RequestTerminal_FullMethodName               = "/core.Poller/RequestTerminal"
 	Poller_OpenTerminal_FullMethodName                  = "/core.Poller/OpenTerminal"
+	Poller_ListTerminals_FullMethodName                 = "/core.Poller/ListTerminals"
+	Poller_GetTerminal_FullMethodName                   = "/core.Poller/GetTerminal"
 	Poller_Discover_FullMethodName                      = "/core.Poller/Discover"
 	Poller_CheckAvailability_FullMethodName             = "/core.Poller/CheckAvailability"
 	Poller_CollectDeviceInformation_FullMethodName      = "/core.Poller/CollectDeviceInformation"
 	Poller_CollectBasicDeviceInformation_FullMethodName = "/core.Poller/CollectBasicDeviceInformation"
 	Poller_CollectPortInformation_FullMethodName        = "/core.Poller/CollectPortInformation"
+	Poller_CollectSignatures_FullMethodName             = "/core.Poller/CollectSignatures"
 	Poller_CollectBasicPortInformation_FullMethodName   = "/core.Poller/CollectBasicPortInformation"
 	Poller_CollectConfig_FullMethodName                 = "/core.Poller/CollectConfig"
 )
@@ -375,6 +378,10 @@ type PollerClient interface {
 	//   - stream-id: the ID of the created session (returned by the Request Terminal)
 	//   - stream-addr: the address of the agent that the Poller needs to connect to
 	OpenTerminal(ctx context.Context, opts ...grpc.CallOption) (Poller_OpenTerminalClient, error)
+	// ListTerminals is used to list all terminals that are open at the moment and all terminals that has been opened
+	ListTerminals(ctx context.Context, in *ListTerminalsRequest, opts ...grpc.CallOption) (*ListTerminalsResponse, error)
+	// Get a singel temrinal by its ID
+	GetTerminal(ctx context.Context, in *GetTerminalRequest, opts ...grpc.CallOption) (*TerminalSession, error)
 	// Discover is used to get basic information about an network element, used to make a quick check of the device
 	// using the generic resource plugin to make request through resource.GetDeiceInformation
 	Discover(ctx context.Context, in *DiscoverRequest, opts ...grpc.CallOption) (*DiscoverResponse, error)
@@ -403,6 +410,13 @@ type PollerClient interface {
 	//   - DHCP Table
 	//   - MAC Table
 	CollectPortInformation(ctx context.Context, in *CollectPortInformationRequest, opts ...grpc.CallOption) (*PortInformationResponse, error)
+	// CollectDeviceSignatures is used to collect the signatures of all ports on a device
+	// or a specific port on the device.
+	//   - Port Mac if any
+	//   - DHCP Table
+	//   - MAC Table
+	//   - Port Link Status
+	CollectSignatures(ctx context.Context, in *CollectSignaturesRequest, opts ...grpc.CallOption) (*CollectSignaturesResponse, error)
 	// CollectBasicPortInformation returns information about a port on a device. This should only take a few seconds to return
 	// so it can be used to get a quick overview of the port. This should not be used to get
 	// the full configuration of the port or logging in thourgh ssh/telnet and running commands
@@ -467,6 +481,24 @@ func (x *pollerOpenTerminalClient) Recv() (*TerminalOutput, error) {
 	return m, nil
 }
 
+func (c *pollerClient) ListTerminals(ctx context.Context, in *ListTerminalsRequest, opts ...grpc.CallOption) (*ListTerminalsResponse, error) {
+	out := new(ListTerminalsResponse)
+	err := c.cc.Invoke(ctx, Poller_ListTerminals_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pollerClient) GetTerminal(ctx context.Context, in *GetTerminalRequest, opts ...grpc.CallOption) (*TerminalSession, error) {
+	out := new(TerminalSession)
+	err := c.cc.Invoke(ctx, Poller_GetTerminal_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *pollerClient) Discover(ctx context.Context, in *DiscoverRequest, opts ...grpc.CallOption) (*DiscoverResponse, error) {
 	out := new(DiscoverResponse)
 	err := c.cc.Invoke(ctx, Poller_Discover_FullMethodName, in, out, opts...)
@@ -512,6 +544,15 @@ func (c *pollerClient) CollectPortInformation(ctx context.Context, in *CollectPo
 	return out, nil
 }
 
+func (c *pollerClient) CollectSignatures(ctx context.Context, in *CollectSignaturesRequest, opts ...grpc.CallOption) (*CollectSignaturesResponse, error) {
+	out := new(CollectSignaturesResponse)
+	err := c.cc.Invoke(ctx, Poller_CollectSignatures_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *pollerClient) CollectBasicPortInformation(ctx context.Context, in *CollectBasicPortInformationRequest, opts ...grpc.CallOption) (*PortInformationResponse, error) {
 	out := new(PortInformationResponse)
 	err := c.cc.Invoke(ctx, Poller_CollectBasicPortInformation_FullMethodName, in, out, opts...)
@@ -543,6 +584,10 @@ type PollerServer interface {
 	//   - stream-id: the ID of the created session (returned by the Request Terminal)
 	//   - stream-addr: the address of the agent that the Poller needs to connect to
 	OpenTerminal(Poller_OpenTerminalServer) error
+	// ListTerminals is used to list all terminals that are open at the moment and all terminals that has been opened
+	ListTerminals(context.Context, *ListTerminalsRequest) (*ListTerminalsResponse, error)
+	// Get a singel temrinal by its ID
+	GetTerminal(context.Context, *GetTerminalRequest) (*TerminalSession, error)
 	// Discover is used to get basic information about an network element, used to make a quick check of the device
 	// using the generic resource plugin to make request through resource.GetDeiceInformation
 	Discover(context.Context, *DiscoverRequest) (*DiscoverResponse, error)
@@ -571,6 +616,13 @@ type PollerServer interface {
 	//   - DHCP Table
 	//   - MAC Table
 	CollectPortInformation(context.Context, *CollectPortInformationRequest) (*PortInformationResponse, error)
+	// CollectDeviceSignatures is used to collect the signatures of all ports on a device
+	// or a specific port on the device.
+	//   - Port Mac if any
+	//   - DHCP Table
+	//   - MAC Table
+	//   - Port Link Status
+	CollectSignatures(context.Context, *CollectSignaturesRequest) (*CollectSignaturesResponse, error)
 	// CollectBasicPortInformation returns information about a port on a device. This should only take a few seconds to return
 	// so it can be used to get a quick overview of the port. This should not be used to get
 	// the full configuration of the port or logging in thourgh ssh/telnet and running commands
@@ -597,6 +649,12 @@ func (UnimplementedPollerServer) RequestTerminal(context.Context, *RequestTermin
 func (UnimplementedPollerServer) OpenTerminal(Poller_OpenTerminalServer) error {
 	return status.Errorf(codes.Unimplemented, "method OpenTerminal not implemented")
 }
+func (UnimplementedPollerServer) ListTerminals(context.Context, *ListTerminalsRequest) (*ListTerminalsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTerminals not implemented")
+}
+func (UnimplementedPollerServer) GetTerminal(context.Context, *GetTerminalRequest) (*TerminalSession, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTerminal not implemented")
+}
 func (UnimplementedPollerServer) Discover(context.Context, *DiscoverRequest) (*DiscoverResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Discover not implemented")
 }
@@ -611,6 +669,9 @@ func (UnimplementedPollerServer) CollectBasicDeviceInformation(context.Context, 
 }
 func (UnimplementedPollerServer) CollectPortInformation(context.Context, *CollectPortInformationRequest) (*PortInformationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CollectPortInformation not implemented")
+}
+func (UnimplementedPollerServer) CollectSignatures(context.Context, *CollectSignaturesRequest) (*CollectSignaturesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CollectSignatures not implemented")
 }
 func (UnimplementedPollerServer) CollectBasicPortInformation(context.Context, *CollectBasicPortInformationRequest) (*PortInformationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CollectBasicPortInformation not implemented")
@@ -672,6 +733,42 @@ func (x *pollerOpenTerminalServer) Recv() (*TerminalInput, error) {
 		return nil, err
 	}
 	return m, nil
+}
+
+func _Poller_ListTerminals_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTerminalsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PollerServer).ListTerminals(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Poller_ListTerminals_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PollerServer).ListTerminals(ctx, req.(*ListTerminalsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Poller_GetTerminal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTerminalRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PollerServer).GetTerminal(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Poller_GetTerminal_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PollerServer).GetTerminal(ctx, req.(*GetTerminalRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Poller_Discover_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -764,6 +861,24 @@ func _Poller_CollectPortInformation_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Poller_CollectSignatures_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CollectSignaturesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PollerServer).CollectSignatures(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Poller_CollectSignatures_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PollerServer).CollectSignatures(ctx, req.(*CollectSignaturesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Poller_CollectBasicPortInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CollectBasicPortInformationRequest)
 	if err := dec(in); err != nil {
@@ -812,6 +927,14 @@ var Poller_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Poller_RequestTerminal_Handler,
 		},
 		{
+			MethodName: "ListTerminals",
+			Handler:    _Poller_ListTerminals_Handler,
+		},
+		{
+			MethodName: "GetTerminal",
+			Handler:    _Poller_GetTerminal_Handler,
+		},
+		{
 			MethodName: "Discover",
 			Handler:    _Poller_Discover_Handler,
 		},
@@ -830,6 +953,10 @@ var Poller_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CollectPortInformation",
 			Handler:    _Poller_CollectPortInformation_Handler,
+		},
+		{
+			MethodName: "CollectSignatures",
+			Handler:    _Poller_CollectSignatures_Handler,
 		},
 		{
 			MethodName: "CollectBasicPortInformation",
