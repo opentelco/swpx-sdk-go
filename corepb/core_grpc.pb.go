@@ -144,7 +144,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SignaturesClient interface {
-	// Collecti s used to collect the signatures of all ports on a device
+	// Collect is used to collect the signatures of all ports on a device
 	// or a specific port on the device.
 	//   - DHCP Table & MAC Table
 	//   - Port Link Status
@@ -234,7 +234,7 @@ func (c *signaturesClient) Compare(ctx context.Context, in *CompareRequest, opts
 // All implementations should embed UnimplementedSignaturesServer
 // for forward compatibility
 type SignaturesServer interface {
-	// Collecti s used to collect the signatures of all ports on a device
+	// Collect is used to collect the signatures of all ports on a device
 	// or a specific port on the device.
 	//   - DHCP Table & MAC Table
 	//   - Port Link Status
@@ -656,18 +656,19 @@ var Diagnostics_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Poller_RequestTerminal_FullMethodName               = "/core.Poller/RequestTerminal"
-	Poller_OpenTerminal_FullMethodName                  = "/core.Poller/OpenTerminal"
-	Poller_ListTerminals_FullMethodName                 = "/core.Poller/ListTerminals"
-	Poller_GetTerminal_FullMethodName                   = "/core.Poller/GetTerminal"
-	Poller_Discover_FullMethodName                      = "/core.Poller/Discover"
-	Poller_CheckAvailability_FullMethodName             = "/core.Poller/CheckAvailability"
-	Poller_CollectDeviceInformation_FullMethodName      = "/core.Poller/CollectDeviceInformation"
-	Poller_CollectBasicDeviceInformation_FullMethodName = "/core.Poller/CollectBasicDeviceInformation"
-	Poller_CollectPortInformation_FullMethodName        = "/core.Poller/CollectPortInformation"
-	Poller_CollectBasicPortInformation_FullMethodName   = "/core.Poller/CollectBasicPortInformation"
-	Poller_CollectConfig_FullMethodName                 = "/core.Poller/CollectConfig"
-	Poller_CollectNeighbours_FullMethodName             = "/core.Poller/CollectNeighbours"
+	Poller_RequestTerminal_FullMethodName        = "/core.Poller/RequestTerminal"
+	Poller_OpenTerminal_FullMethodName           = "/core.Poller/OpenTerminal"
+	Poller_ListTerminals_FullMethodName          = "/core.Poller/ListTerminals"
+	Poller_GetTerminal_FullMethodName            = "/core.Poller/GetTerminal"
+	Poller_Discover_FullMethodName               = "/core.Poller/Discover"
+	Poller_CheckAvailability_FullMethodName      = "/core.Poller/CheckAvailability"
+	Poller_DeviceInformation_FullMethodName      = "/core.Poller/DeviceInformation"
+	Poller_BasicDeviceInformation_FullMethodName = "/core.Poller/BasicDeviceInformation"
+	Poller_PortInformation_FullMethodName        = "/core.Poller/PortInformation"
+	Poller_BasicPortInformation_FullMethodName   = "/core.Poller/BasicPortInformation"
+	Poller_BasicPortsInformation_FullMethodName  = "/core.Poller/BasicPortsInformation"
+	Poller_RunningConfiguration_FullMethodName   = "/core.Poller/RunningConfiguration"
+	Poller_Neighbours_FullMethodName             = "/core.Poller/Neighbours"
 )
 
 // PollerClient is the client API for Poller service.
@@ -697,10 +698,10 @@ type PollerClient interface {
 	CheckAvailability(ctx context.Context, in *CheckAvailabilityRequest, opts ...grpc.CallOption) (*CheckAvailabilityResponse, error)
 	// GetDeviceInformation returns the technical information about a device
 	// port etc is not considered in this request
-	CollectDeviceInformation(ctx context.Context, in *CollectDeviceInformationRequest, opts ...grpc.CallOption) (*DeviceInformationResponse, error)
+	DeviceInformation(ctx context.Context, in *DeviceInformationRequest, opts ...grpc.CallOption) (*DeviceInformationResponse, error)
 	// get basic information about a device
 	// port etc is not considered in this request
-	CollectBasicDeviceInformation(ctx context.Context, in *CollectBasicDeviceInformationRequest, opts ...grpc.CallOption) (*DeviceInformationResponse, error)
+	BasicDeviceInformation(ctx context.Context, in *BasicDeviceInformationRequest, opts ...grpc.CallOption) (*DeviceInformationResponse, error)
 	// Get port information about a Port. This should be used to get the full configuration of the port
 	// or logging in thourgh ssh/telnet and running commands
 	//
@@ -714,22 +715,29 @@ type PollerClient interface {
 	//   - ACL / QoS
 	//   - DHCP Table
 	//   - MAC Table
-	CollectPortInformation(ctx context.Context, in *CollectPortInformationRequest, opts ...grpc.CallOption) (*PortInformationResponse, error)
-	// CollectBasicPortInformation returns information about a port on a device. This should only take a few seconds to return
+	PortInformation(ctx context.Context, in *PortInformationRequest, opts ...grpc.CallOption) (*PortInformationResponse, error)
+	// BasicPortInformation returns information about a port on a device. This should only take a few seconds to return
 	// so it can be used to get a quick overview of the port. This should not be used to get
 	// the full configuration of the port or logging in thourgh ssh/telnet and running commands
 	//
 	// The request should contain the hostname and the port name
 	// together with the ifIndex and the physical index of the port
 	// Max 5-10 seconds to return, for a more extensive information use the CollectPortInformation method
-	//   - Basic info with MAC Address
+	//
+	//   - Basic port info
+	//
 	//   - Statistics
+	//
 	//   - Transceiver Information (if possible to do quickly)
-	CollectBasicPortInformation(ctx context.Context, in *CollectBasicPortInformationRequest, opts ...grpc.CallOption) (*PortInformationResponse, error)
-	// CollectConfig collects the configuration of a network element check for any changes between the stored config and the
+	//
+	//     BasicPortsInformation returns information about all ports on a device. This should only take a few seconds longer
+	//     to return.
+	BasicPortInformation(ctx context.Context, in *BasicPortInformationRequest, opts ...grpc.CallOption) (*PortInformationResponse, error)
+	BasicPortsInformation(ctx context.Context, in *BasicPortsInformationRequest, opts ...grpc.CallOption) (*PortsInformationResponse, error)
+	// RunningConfiguration collects the configuration of a network element check for any changes between the stored config and the
 	// collected one. Returs a list of changes and the config collected from the network element
-	CollectConfig(ctx context.Context, in *CollectConfigRequest, opts ...grpc.CallOption) (*CollectConfigResponse, error)
-	CollectNeighbours(ctx context.Context, in *CollectNeighboursRequest, opts ...grpc.CallOption) (*CollectNeighboursResponse, error)
+	RunningConfiguration(ctx context.Context, in *RunningConfigurationRequest, opts ...grpc.CallOption) (*RunningConfigurationResponse, error)
+	Neighbours(ctx context.Context, in *NeighboursRequest, opts ...grpc.CallOption) (*NeighboursResponse, error)
 }
 
 type pollerClient struct {
@@ -816,54 +824,63 @@ func (c *pollerClient) CheckAvailability(ctx context.Context, in *CheckAvailabil
 	return out, nil
 }
 
-func (c *pollerClient) CollectDeviceInformation(ctx context.Context, in *CollectDeviceInformationRequest, opts ...grpc.CallOption) (*DeviceInformationResponse, error) {
+func (c *pollerClient) DeviceInformation(ctx context.Context, in *DeviceInformationRequest, opts ...grpc.CallOption) (*DeviceInformationResponse, error) {
 	out := new(DeviceInformationResponse)
-	err := c.cc.Invoke(ctx, Poller_CollectDeviceInformation_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Poller_DeviceInformation_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pollerClient) CollectBasicDeviceInformation(ctx context.Context, in *CollectBasicDeviceInformationRequest, opts ...grpc.CallOption) (*DeviceInformationResponse, error) {
+func (c *pollerClient) BasicDeviceInformation(ctx context.Context, in *BasicDeviceInformationRequest, opts ...grpc.CallOption) (*DeviceInformationResponse, error) {
 	out := new(DeviceInformationResponse)
-	err := c.cc.Invoke(ctx, Poller_CollectBasicDeviceInformation_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Poller_BasicDeviceInformation_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pollerClient) CollectPortInformation(ctx context.Context, in *CollectPortInformationRequest, opts ...grpc.CallOption) (*PortInformationResponse, error) {
+func (c *pollerClient) PortInformation(ctx context.Context, in *PortInformationRequest, opts ...grpc.CallOption) (*PortInformationResponse, error) {
 	out := new(PortInformationResponse)
-	err := c.cc.Invoke(ctx, Poller_CollectPortInformation_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Poller_PortInformation_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pollerClient) CollectBasicPortInformation(ctx context.Context, in *CollectBasicPortInformationRequest, opts ...grpc.CallOption) (*PortInformationResponse, error) {
+func (c *pollerClient) BasicPortInformation(ctx context.Context, in *BasicPortInformationRequest, opts ...grpc.CallOption) (*PortInformationResponse, error) {
 	out := new(PortInformationResponse)
-	err := c.cc.Invoke(ctx, Poller_CollectBasicPortInformation_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Poller_BasicPortInformation_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pollerClient) CollectConfig(ctx context.Context, in *CollectConfigRequest, opts ...grpc.CallOption) (*CollectConfigResponse, error) {
-	out := new(CollectConfigResponse)
-	err := c.cc.Invoke(ctx, Poller_CollectConfig_FullMethodName, in, out, opts...)
+func (c *pollerClient) BasicPortsInformation(ctx context.Context, in *BasicPortsInformationRequest, opts ...grpc.CallOption) (*PortsInformationResponse, error) {
+	out := new(PortsInformationResponse)
+	err := c.cc.Invoke(ctx, Poller_BasicPortsInformation_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pollerClient) CollectNeighbours(ctx context.Context, in *CollectNeighboursRequest, opts ...grpc.CallOption) (*CollectNeighboursResponse, error) {
-	out := new(CollectNeighboursResponse)
-	err := c.cc.Invoke(ctx, Poller_CollectNeighbours_FullMethodName, in, out, opts...)
+func (c *pollerClient) RunningConfiguration(ctx context.Context, in *RunningConfigurationRequest, opts ...grpc.CallOption) (*RunningConfigurationResponse, error) {
+	out := new(RunningConfigurationResponse)
+	err := c.cc.Invoke(ctx, Poller_RunningConfiguration_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pollerClient) Neighbours(ctx context.Context, in *NeighboursRequest, opts ...grpc.CallOption) (*NeighboursResponse, error) {
+	out := new(NeighboursResponse)
+	err := c.cc.Invoke(ctx, Poller_Neighbours_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -897,10 +914,10 @@ type PollerServer interface {
 	CheckAvailability(context.Context, *CheckAvailabilityRequest) (*CheckAvailabilityResponse, error)
 	// GetDeviceInformation returns the technical information about a device
 	// port etc is not considered in this request
-	CollectDeviceInformation(context.Context, *CollectDeviceInformationRequest) (*DeviceInformationResponse, error)
+	DeviceInformation(context.Context, *DeviceInformationRequest) (*DeviceInformationResponse, error)
 	// get basic information about a device
 	// port etc is not considered in this request
-	CollectBasicDeviceInformation(context.Context, *CollectBasicDeviceInformationRequest) (*DeviceInformationResponse, error)
+	BasicDeviceInformation(context.Context, *BasicDeviceInformationRequest) (*DeviceInformationResponse, error)
 	// Get port information about a Port. This should be used to get the full configuration of the port
 	// or logging in thourgh ssh/telnet and running commands
 	//
@@ -914,22 +931,29 @@ type PollerServer interface {
 	//   - ACL / QoS
 	//   - DHCP Table
 	//   - MAC Table
-	CollectPortInformation(context.Context, *CollectPortInformationRequest) (*PortInformationResponse, error)
-	// CollectBasicPortInformation returns information about a port on a device. This should only take a few seconds to return
+	PortInformation(context.Context, *PortInformationRequest) (*PortInformationResponse, error)
+	// BasicPortInformation returns information about a port on a device. This should only take a few seconds to return
 	// so it can be used to get a quick overview of the port. This should not be used to get
 	// the full configuration of the port or logging in thourgh ssh/telnet and running commands
 	//
 	// The request should contain the hostname and the port name
 	// together with the ifIndex and the physical index of the port
 	// Max 5-10 seconds to return, for a more extensive information use the CollectPortInformation method
-	//   - Basic info with MAC Address
+	//
+	//   - Basic port info
+	//
 	//   - Statistics
+	//
 	//   - Transceiver Information (if possible to do quickly)
-	CollectBasicPortInformation(context.Context, *CollectBasicPortInformationRequest) (*PortInformationResponse, error)
-	// CollectConfig collects the configuration of a network element check for any changes between the stored config and the
+	//
+	//     BasicPortsInformation returns information about all ports on a device. This should only take a few seconds longer
+	//     to return.
+	BasicPortInformation(context.Context, *BasicPortInformationRequest) (*PortInformationResponse, error)
+	BasicPortsInformation(context.Context, *BasicPortsInformationRequest) (*PortsInformationResponse, error)
+	// RunningConfiguration collects the configuration of a network element check for any changes between the stored config and the
 	// collected one. Returs a list of changes and the config collected from the network element
-	CollectConfig(context.Context, *CollectConfigRequest) (*CollectConfigResponse, error)
-	CollectNeighbours(context.Context, *CollectNeighboursRequest) (*CollectNeighboursResponse, error)
+	RunningConfiguration(context.Context, *RunningConfigurationRequest) (*RunningConfigurationResponse, error)
+	Neighbours(context.Context, *NeighboursRequest) (*NeighboursResponse, error)
 }
 
 // UnimplementedPollerServer should be embedded to have forward compatible implementations.
@@ -954,23 +978,26 @@ func (UnimplementedPollerServer) Discover(context.Context, *DiscoverRequest) (*D
 func (UnimplementedPollerServer) CheckAvailability(context.Context, *CheckAvailabilityRequest) (*CheckAvailabilityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckAvailability not implemented")
 }
-func (UnimplementedPollerServer) CollectDeviceInformation(context.Context, *CollectDeviceInformationRequest) (*DeviceInformationResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CollectDeviceInformation not implemented")
+func (UnimplementedPollerServer) DeviceInformation(context.Context, *DeviceInformationRequest) (*DeviceInformationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeviceInformation not implemented")
 }
-func (UnimplementedPollerServer) CollectBasicDeviceInformation(context.Context, *CollectBasicDeviceInformationRequest) (*DeviceInformationResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CollectBasicDeviceInformation not implemented")
+func (UnimplementedPollerServer) BasicDeviceInformation(context.Context, *BasicDeviceInformationRequest) (*DeviceInformationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BasicDeviceInformation not implemented")
 }
-func (UnimplementedPollerServer) CollectPortInformation(context.Context, *CollectPortInformationRequest) (*PortInformationResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CollectPortInformation not implemented")
+func (UnimplementedPollerServer) PortInformation(context.Context, *PortInformationRequest) (*PortInformationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PortInformation not implemented")
 }
-func (UnimplementedPollerServer) CollectBasicPortInformation(context.Context, *CollectBasicPortInformationRequest) (*PortInformationResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CollectBasicPortInformation not implemented")
+func (UnimplementedPollerServer) BasicPortInformation(context.Context, *BasicPortInformationRequest) (*PortInformationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BasicPortInformation not implemented")
 }
-func (UnimplementedPollerServer) CollectConfig(context.Context, *CollectConfigRequest) (*CollectConfigResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CollectConfig not implemented")
+func (UnimplementedPollerServer) BasicPortsInformation(context.Context, *BasicPortsInformationRequest) (*PortsInformationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BasicPortsInformation not implemented")
 }
-func (UnimplementedPollerServer) CollectNeighbours(context.Context, *CollectNeighboursRequest) (*CollectNeighboursResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CollectNeighbours not implemented")
+func (UnimplementedPollerServer) RunningConfiguration(context.Context, *RunningConfigurationRequest) (*RunningConfigurationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RunningConfiguration not implemented")
+}
+func (UnimplementedPollerServer) Neighbours(context.Context, *NeighboursRequest) (*NeighboursResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Neighbours not implemented")
 }
 
 // UnsafePollerServer may be embedded to opt out of forward compatibility for this service.
@@ -1100,110 +1127,128 @@ func _Poller_CheckAvailability_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Poller_CollectDeviceInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CollectDeviceInformationRequest)
+func _Poller_DeviceInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeviceInformationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PollerServer).CollectDeviceInformation(ctx, in)
+		return srv.(PollerServer).DeviceInformation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Poller_CollectDeviceInformation_FullMethodName,
+		FullMethod: Poller_DeviceInformation_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PollerServer).CollectDeviceInformation(ctx, req.(*CollectDeviceInformationRequest))
+		return srv.(PollerServer).DeviceInformation(ctx, req.(*DeviceInformationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Poller_CollectBasicDeviceInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CollectBasicDeviceInformationRequest)
+func _Poller_BasicDeviceInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BasicDeviceInformationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PollerServer).CollectBasicDeviceInformation(ctx, in)
+		return srv.(PollerServer).BasicDeviceInformation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Poller_CollectBasicDeviceInformation_FullMethodName,
+		FullMethod: Poller_BasicDeviceInformation_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PollerServer).CollectBasicDeviceInformation(ctx, req.(*CollectBasicDeviceInformationRequest))
+		return srv.(PollerServer).BasicDeviceInformation(ctx, req.(*BasicDeviceInformationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Poller_CollectPortInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CollectPortInformationRequest)
+func _Poller_PortInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PortInformationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PollerServer).CollectPortInformation(ctx, in)
+		return srv.(PollerServer).PortInformation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Poller_CollectPortInformation_FullMethodName,
+		FullMethod: Poller_PortInformation_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PollerServer).CollectPortInformation(ctx, req.(*CollectPortInformationRequest))
+		return srv.(PollerServer).PortInformation(ctx, req.(*PortInformationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Poller_CollectBasicPortInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CollectBasicPortInformationRequest)
+func _Poller_BasicPortInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BasicPortInformationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PollerServer).CollectBasicPortInformation(ctx, in)
+		return srv.(PollerServer).BasicPortInformation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Poller_CollectBasicPortInformation_FullMethodName,
+		FullMethod: Poller_BasicPortInformation_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PollerServer).CollectBasicPortInformation(ctx, req.(*CollectBasicPortInformationRequest))
+		return srv.(PollerServer).BasicPortInformation(ctx, req.(*BasicPortInformationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Poller_CollectConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CollectConfigRequest)
+func _Poller_BasicPortsInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BasicPortsInformationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PollerServer).CollectConfig(ctx, in)
+		return srv.(PollerServer).BasicPortsInformation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Poller_CollectConfig_FullMethodName,
+		FullMethod: Poller_BasicPortsInformation_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PollerServer).CollectConfig(ctx, req.(*CollectConfigRequest))
+		return srv.(PollerServer).BasicPortsInformation(ctx, req.(*BasicPortsInformationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Poller_CollectNeighbours_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CollectNeighboursRequest)
+func _Poller_RunningConfiguration_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RunningConfigurationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PollerServer).CollectNeighbours(ctx, in)
+		return srv.(PollerServer).RunningConfiguration(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Poller_CollectNeighbours_FullMethodName,
+		FullMethod: Poller_RunningConfiguration_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PollerServer).CollectNeighbours(ctx, req.(*CollectNeighboursRequest))
+		return srv.(PollerServer).RunningConfiguration(ctx, req.(*RunningConfigurationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Poller_Neighbours_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NeighboursRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PollerServer).Neighbours(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Poller_Neighbours_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PollerServer).Neighbours(ctx, req.(*NeighboursRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1236,28 +1281,32 @@ var Poller_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Poller_CheckAvailability_Handler,
 		},
 		{
-			MethodName: "CollectDeviceInformation",
-			Handler:    _Poller_CollectDeviceInformation_Handler,
+			MethodName: "DeviceInformation",
+			Handler:    _Poller_DeviceInformation_Handler,
 		},
 		{
-			MethodName: "CollectBasicDeviceInformation",
-			Handler:    _Poller_CollectBasicDeviceInformation_Handler,
+			MethodName: "BasicDeviceInformation",
+			Handler:    _Poller_BasicDeviceInformation_Handler,
 		},
 		{
-			MethodName: "CollectPortInformation",
-			Handler:    _Poller_CollectPortInformation_Handler,
+			MethodName: "PortInformation",
+			Handler:    _Poller_PortInformation_Handler,
 		},
 		{
-			MethodName: "CollectBasicPortInformation",
-			Handler:    _Poller_CollectBasicPortInformation_Handler,
+			MethodName: "BasicPortInformation",
+			Handler:    _Poller_BasicPortInformation_Handler,
 		},
 		{
-			MethodName: "CollectConfig",
-			Handler:    _Poller_CollectConfig_Handler,
+			MethodName: "BasicPortsInformation",
+			Handler:    _Poller_BasicPortsInformation_Handler,
 		},
 		{
-			MethodName: "CollectNeighbours",
-			Handler:    _Poller_CollectNeighbours_Handler,
+			MethodName: "RunningConfiguration",
+			Handler:    _Poller_RunningConfiguration_Handler,
+		},
+		{
+			MethodName: "Neighbours",
+			Handler:    _Poller_Neighbours_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
