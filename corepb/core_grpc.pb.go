@@ -132,6 +132,311 @@ var Plugins_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
+	Signatures_Collect_FullMethodName          = "/core.Signatures/Collect"
+	Signatures_GetCollections_FullMethodName   = "/core.Signatures/GetCollections"
+	Signatures_GetCollection_FullMethodName    = "/core.Signatures/GetCollection"
+	Signatures_UploadCollection_FullMethodName = "/core.Signatures/UploadCollection"
+	Signatures_RemoveCollection_FullMethodName = "/core.Signatures/RemoveCollection"
+	Signatures_Compare_FullMethodName          = "/core.Signatures/Compare"
+)
+
+// SignaturesClient is the client API for Signatures service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type SignaturesClient interface {
+	// Collecti s used to collect the signatures of all ports on a device
+	// or a specific port on the device.
+	//   - DHCP Table & MAC Table
+	//   - Port Link Status
+	//   - SFP Transceiver Information
+	Collect(ctx context.Context, in *CollectSignaturesRequest, opts ...grpc.CallOption) (*CollectSignaturesResponse, error)
+	// GetCollections returns a list of all collections that has been collected, the list can be filtered
+	// by device, regions, timestamp etc. The list only contains a sumary of the collection and not the
+	// full collection. To get the full collection use the GetCollection method
+	GetCollections(ctx context.Context, in *GetCollectionsRequest, opts ...grpc.CallOption) (*GetCollectionsResponse, error)
+	// GetCollection returns a single collection that has been collected, the collection contains all the data that was collected from the device
+	GetCollection(ctx context.Context, in *GetCollectionRequest, opts ...grpc.CallOption) (*GetCollectionResponse, error)
+	// UploadCollection is used to upload a collection to the database and store it for later use
+	UploadCollection(ctx context.Context, in *UploadCollectionRequest, opts ...grpc.CallOption) (*UploadCollectionResponse, error)
+	// RemoveCollection is used to remove a collection from the database
+	RemoveCollection(ctx context.Context, in *RemoveCollectionRequest, opts ...grpc.CallOption) (*RemoveCollectionResponse, error)
+	// Compare is used to compare 1-n signature collections with 1-n signature collections
+	// The previous 1-n collections are merged together to create a baseline of how the
+	// device looked before the change. Port status will be taken from the last collection
+	// and the rest of the data will be taken from the merged collection. The new 1-n collections
+	// will be compared to the baseline and the differences will be returned to the client.
+	Compare(ctx context.Context, in *CompareRequest, opts ...grpc.CallOption) (*CompareResponse, error)
+}
+
+type signaturesClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewSignaturesClient(cc grpc.ClientConnInterface) SignaturesClient {
+	return &signaturesClient{cc}
+}
+
+func (c *signaturesClient) Collect(ctx context.Context, in *CollectSignaturesRequest, opts ...grpc.CallOption) (*CollectSignaturesResponse, error) {
+	out := new(CollectSignaturesResponse)
+	err := c.cc.Invoke(ctx, Signatures_Collect_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *signaturesClient) GetCollections(ctx context.Context, in *GetCollectionsRequest, opts ...grpc.CallOption) (*GetCollectionsResponse, error) {
+	out := new(GetCollectionsResponse)
+	err := c.cc.Invoke(ctx, Signatures_GetCollections_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *signaturesClient) GetCollection(ctx context.Context, in *GetCollectionRequest, opts ...grpc.CallOption) (*GetCollectionResponse, error) {
+	out := new(GetCollectionResponse)
+	err := c.cc.Invoke(ctx, Signatures_GetCollection_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *signaturesClient) UploadCollection(ctx context.Context, in *UploadCollectionRequest, opts ...grpc.CallOption) (*UploadCollectionResponse, error) {
+	out := new(UploadCollectionResponse)
+	err := c.cc.Invoke(ctx, Signatures_UploadCollection_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *signaturesClient) RemoveCollection(ctx context.Context, in *RemoveCollectionRequest, opts ...grpc.CallOption) (*RemoveCollectionResponse, error) {
+	out := new(RemoveCollectionResponse)
+	err := c.cc.Invoke(ctx, Signatures_RemoveCollection_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *signaturesClient) Compare(ctx context.Context, in *CompareRequest, opts ...grpc.CallOption) (*CompareResponse, error) {
+	out := new(CompareResponse)
+	err := c.cc.Invoke(ctx, Signatures_Compare_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// SignaturesServer is the server API for Signatures service.
+// All implementations should embed UnimplementedSignaturesServer
+// for forward compatibility
+type SignaturesServer interface {
+	// Collecti s used to collect the signatures of all ports on a device
+	// or a specific port on the device.
+	//   - DHCP Table & MAC Table
+	//   - Port Link Status
+	//   - SFP Transceiver Information
+	Collect(context.Context, *CollectSignaturesRequest) (*CollectSignaturesResponse, error)
+	// GetCollections returns a list of all collections that has been collected, the list can be filtered
+	// by device, regions, timestamp etc. The list only contains a sumary of the collection and not the
+	// full collection. To get the full collection use the GetCollection method
+	GetCollections(context.Context, *GetCollectionsRequest) (*GetCollectionsResponse, error)
+	// GetCollection returns a single collection that has been collected, the collection contains all the data that was collected from the device
+	GetCollection(context.Context, *GetCollectionRequest) (*GetCollectionResponse, error)
+	// UploadCollection is used to upload a collection to the database and store it for later use
+	UploadCollection(context.Context, *UploadCollectionRequest) (*UploadCollectionResponse, error)
+	// RemoveCollection is used to remove a collection from the database
+	RemoveCollection(context.Context, *RemoveCollectionRequest) (*RemoveCollectionResponse, error)
+	// Compare is used to compare 1-n signature collections with 1-n signature collections
+	// The previous 1-n collections are merged together to create a baseline of how the
+	// device looked before the change. Port status will be taken from the last collection
+	// and the rest of the data will be taken from the merged collection. The new 1-n collections
+	// will be compared to the baseline and the differences will be returned to the client.
+	Compare(context.Context, *CompareRequest) (*CompareResponse, error)
+}
+
+// UnimplementedSignaturesServer should be embedded to have forward compatible implementations.
+type UnimplementedSignaturesServer struct {
+}
+
+func (UnimplementedSignaturesServer) Collect(context.Context, *CollectSignaturesRequest) (*CollectSignaturesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Collect not implemented")
+}
+func (UnimplementedSignaturesServer) GetCollections(context.Context, *GetCollectionsRequest) (*GetCollectionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCollections not implemented")
+}
+func (UnimplementedSignaturesServer) GetCollection(context.Context, *GetCollectionRequest) (*GetCollectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCollection not implemented")
+}
+func (UnimplementedSignaturesServer) UploadCollection(context.Context, *UploadCollectionRequest) (*UploadCollectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UploadCollection not implemented")
+}
+func (UnimplementedSignaturesServer) RemoveCollection(context.Context, *RemoveCollectionRequest) (*RemoveCollectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveCollection not implemented")
+}
+func (UnimplementedSignaturesServer) Compare(context.Context, *CompareRequest) (*CompareResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Compare not implemented")
+}
+
+// UnsafeSignaturesServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to SignaturesServer will
+// result in compilation errors.
+type UnsafeSignaturesServer interface {
+	mustEmbedUnimplementedSignaturesServer()
+}
+
+func RegisterSignaturesServer(s grpc.ServiceRegistrar, srv SignaturesServer) {
+	s.RegisterService(&Signatures_ServiceDesc, srv)
+}
+
+func _Signatures_Collect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CollectSignaturesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SignaturesServer).Collect(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Signatures_Collect_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SignaturesServer).Collect(ctx, req.(*CollectSignaturesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Signatures_GetCollections_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCollectionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SignaturesServer).GetCollections(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Signatures_GetCollections_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SignaturesServer).GetCollections(ctx, req.(*GetCollectionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Signatures_GetCollection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCollectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SignaturesServer).GetCollection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Signatures_GetCollection_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SignaturesServer).GetCollection(ctx, req.(*GetCollectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Signatures_UploadCollection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadCollectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SignaturesServer).UploadCollection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Signatures_UploadCollection_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SignaturesServer).UploadCollection(ctx, req.(*UploadCollectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Signatures_RemoveCollection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveCollectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SignaturesServer).RemoveCollection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Signatures_RemoveCollection_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SignaturesServer).RemoveCollection(ctx, req.(*RemoveCollectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Signatures_Compare_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CompareRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SignaturesServer).Compare(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Signatures_Compare_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SignaturesServer).Compare(ctx, req.(*CompareRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Signatures_ServiceDesc is the grpc.ServiceDesc for Signatures service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Signatures_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "core.Signatures",
+	HandlerType: (*SignaturesServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Collect",
+			Handler:    _Signatures_Collect_Handler,
+		},
+		{
+			MethodName: "GetCollections",
+			Handler:    _Signatures_GetCollections_Handler,
+		},
+		{
+			MethodName: "GetCollection",
+			Handler:    _Signatures_GetCollection_Handler,
+		},
+		{
+			MethodName: "UploadCollection",
+			Handler:    _Signatures_UploadCollection_Handler,
+		},
+		{
+			MethodName: "RemoveCollection",
+			Handler:    _Signatures_RemoveCollection_Handler,
+		},
+		{
+			MethodName: "Compare",
+			Handler:    _Signatures_Compare_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "core.proto",
+}
+
+const (
 	Diagnostics_RunDiagnostic_FullMethodName      = "/core.Diagnostics/RunDiagnostic"
 	Diagnostics_RunQuickDiagnostic_FullMethodName = "/core.Diagnostics/RunQuickDiagnostic"
 	Diagnostics_GetDiagnostic_FullMethodName      = "/core.Diagnostics/GetDiagnostic"
@@ -360,9 +665,9 @@ const (
 	Poller_CollectDeviceInformation_FullMethodName      = "/core.Poller/CollectDeviceInformation"
 	Poller_CollectBasicDeviceInformation_FullMethodName = "/core.Poller/CollectBasicDeviceInformation"
 	Poller_CollectPortInformation_FullMethodName        = "/core.Poller/CollectPortInformation"
-	Poller_CollectSignatures_FullMethodName             = "/core.Poller/CollectSignatures"
 	Poller_CollectBasicPortInformation_FullMethodName   = "/core.Poller/CollectBasicPortInformation"
 	Poller_CollectConfig_FullMethodName                 = "/core.Poller/CollectConfig"
+	Poller_CollectNeighbours_FullMethodName             = "/core.Poller/CollectNeighbours"
 )
 
 // PollerClient is the client API for Poller service.
@@ -410,13 +715,6 @@ type PollerClient interface {
 	//   - DHCP Table
 	//   - MAC Table
 	CollectPortInformation(ctx context.Context, in *CollectPortInformationRequest, opts ...grpc.CallOption) (*PortInformationResponse, error)
-	// CollectDeviceSignatures is used to collect the signatures of all ports on a device
-	// or a specific port on the device.
-	//   - Port Mac if any
-	//   - DHCP Table
-	//   - MAC Table
-	//   - Port Link Status
-	CollectSignatures(ctx context.Context, in *CollectSignaturesRequest, opts ...grpc.CallOption) (*CollectSignaturesResponse, error)
 	// CollectBasicPortInformation returns information about a port on a device. This should only take a few seconds to return
 	// so it can be used to get a quick overview of the port. This should not be used to get
 	// the full configuration of the port or logging in thourgh ssh/telnet and running commands
@@ -431,6 +729,7 @@ type PollerClient interface {
 	// CollectConfig collects the configuration of a network element check for any changes between the stored config and the
 	// collected one. Returs a list of changes and the config collected from the network element
 	CollectConfig(ctx context.Context, in *CollectConfigRequest, opts ...grpc.CallOption) (*CollectConfigResponse, error)
+	CollectNeighbours(ctx context.Context, in *CollectNeighboursRequest, opts ...grpc.CallOption) (*CollectNeighboursResponse, error)
 }
 
 type pollerClient struct {
@@ -544,15 +843,6 @@ func (c *pollerClient) CollectPortInformation(ctx context.Context, in *CollectPo
 	return out, nil
 }
 
-func (c *pollerClient) CollectSignatures(ctx context.Context, in *CollectSignaturesRequest, opts ...grpc.CallOption) (*CollectSignaturesResponse, error) {
-	out := new(CollectSignaturesResponse)
-	err := c.cc.Invoke(ctx, Poller_CollectSignatures_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *pollerClient) CollectBasicPortInformation(ctx context.Context, in *CollectBasicPortInformationRequest, opts ...grpc.CallOption) (*PortInformationResponse, error) {
 	out := new(PortInformationResponse)
 	err := c.cc.Invoke(ctx, Poller_CollectBasicPortInformation_FullMethodName, in, out, opts...)
@@ -565,6 +855,15 @@ func (c *pollerClient) CollectBasicPortInformation(ctx context.Context, in *Coll
 func (c *pollerClient) CollectConfig(ctx context.Context, in *CollectConfigRequest, opts ...grpc.CallOption) (*CollectConfigResponse, error) {
 	out := new(CollectConfigResponse)
 	err := c.cc.Invoke(ctx, Poller_CollectConfig_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pollerClient) CollectNeighbours(ctx context.Context, in *CollectNeighboursRequest, opts ...grpc.CallOption) (*CollectNeighboursResponse, error) {
+	out := new(CollectNeighboursResponse)
+	err := c.cc.Invoke(ctx, Poller_CollectNeighbours_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -616,13 +915,6 @@ type PollerServer interface {
 	//   - DHCP Table
 	//   - MAC Table
 	CollectPortInformation(context.Context, *CollectPortInformationRequest) (*PortInformationResponse, error)
-	// CollectDeviceSignatures is used to collect the signatures of all ports on a device
-	// or a specific port on the device.
-	//   - Port Mac if any
-	//   - DHCP Table
-	//   - MAC Table
-	//   - Port Link Status
-	CollectSignatures(context.Context, *CollectSignaturesRequest) (*CollectSignaturesResponse, error)
 	// CollectBasicPortInformation returns information about a port on a device. This should only take a few seconds to return
 	// so it can be used to get a quick overview of the port. This should not be used to get
 	// the full configuration of the port or logging in thourgh ssh/telnet and running commands
@@ -637,6 +929,7 @@ type PollerServer interface {
 	// CollectConfig collects the configuration of a network element check for any changes between the stored config and the
 	// collected one. Returs a list of changes and the config collected from the network element
 	CollectConfig(context.Context, *CollectConfigRequest) (*CollectConfigResponse, error)
+	CollectNeighbours(context.Context, *CollectNeighboursRequest) (*CollectNeighboursResponse, error)
 }
 
 // UnimplementedPollerServer should be embedded to have forward compatible implementations.
@@ -670,14 +963,14 @@ func (UnimplementedPollerServer) CollectBasicDeviceInformation(context.Context, 
 func (UnimplementedPollerServer) CollectPortInformation(context.Context, *CollectPortInformationRequest) (*PortInformationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CollectPortInformation not implemented")
 }
-func (UnimplementedPollerServer) CollectSignatures(context.Context, *CollectSignaturesRequest) (*CollectSignaturesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CollectSignatures not implemented")
-}
 func (UnimplementedPollerServer) CollectBasicPortInformation(context.Context, *CollectBasicPortInformationRequest) (*PortInformationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CollectBasicPortInformation not implemented")
 }
 func (UnimplementedPollerServer) CollectConfig(context.Context, *CollectConfigRequest) (*CollectConfigResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CollectConfig not implemented")
+}
+func (UnimplementedPollerServer) CollectNeighbours(context.Context, *CollectNeighboursRequest) (*CollectNeighboursResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CollectNeighbours not implemented")
 }
 
 // UnsafePollerServer may be embedded to opt out of forward compatibility for this service.
@@ -861,24 +1154,6 @@ func _Poller_CollectPortInformation_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Poller_CollectSignatures_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CollectSignaturesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PollerServer).CollectSignatures(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Poller_CollectSignatures_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PollerServer).CollectSignatures(ctx, req.(*CollectSignaturesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Poller_CollectBasicPortInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CollectBasicPortInformationRequest)
 	if err := dec(in); err != nil {
@@ -911,6 +1186,24 @@ func _Poller_CollectConfig_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PollerServer).CollectConfig(ctx, req.(*CollectConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Poller_CollectNeighbours_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CollectNeighboursRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PollerServer).CollectNeighbours(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Poller_CollectNeighbours_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PollerServer).CollectNeighbours(ctx, req.(*CollectNeighboursRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -955,16 +1248,16 @@ var Poller_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Poller_CollectPortInformation_Handler,
 		},
 		{
-			MethodName: "CollectSignatures",
-			Handler:    _Poller_CollectSignatures_Handler,
-		},
-		{
 			MethodName: "CollectBasicPortInformation",
 			Handler:    _Poller_CollectBasicPortInformation_Handler,
 		},
 		{
 			MethodName: "CollectConfig",
 			Handler:    _Poller_CollectConfig_Handler,
+		},
+		{
+			MethodName: "CollectNeighbours",
+			Handler:    _Poller_CollectNeighbours_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
