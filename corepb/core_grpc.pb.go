@@ -656,19 +656,19 @@ var Diagnostics_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Poller_RequestTerminal_FullMethodName        = "/core.Poller/RequestTerminal"
-	Poller_OpenTerminal_FullMethodName           = "/core.Poller/OpenTerminal"
-	Poller_ListTerminals_FullMethodName          = "/core.Poller/ListTerminals"
-	Poller_GetTerminal_FullMethodName            = "/core.Poller/GetTerminal"
-	Poller_Discover_FullMethodName               = "/core.Poller/Discover"
-	Poller_CheckAvailability_FullMethodName      = "/core.Poller/CheckAvailability"
-	Poller_DeviceInformation_FullMethodName      = "/core.Poller/DeviceInformation"
-	Poller_BasicDeviceInformation_FullMethodName = "/core.Poller/BasicDeviceInformation"
-	Poller_PortInformation_FullMethodName        = "/core.Poller/PortInformation"
-	Poller_BasicPortInformation_FullMethodName   = "/core.Poller/BasicPortInformation"
-	Poller_BasicPortsInformation_FullMethodName  = "/core.Poller/BasicPortsInformation"
-	Poller_RunningConfiguration_FullMethodName   = "/core.Poller/RunningConfiguration"
-	Poller_Neighbours_FullMethodName             = "/core.Poller/Neighbours"
+	Poller_RequestTerminal_FullMethodName           = "/core.Poller/RequestTerminal"
+	Poller_OpenTerminal_FullMethodName              = "/core.Poller/OpenTerminal"
+	Poller_ListTerminals_FullMethodName             = "/core.Poller/ListTerminals"
+	Poller_GetTerminal_FullMethodName               = "/core.Poller/GetTerminal"
+	Poller_DiscoverDevice_FullMethodName            = "/core.Poller/DiscoverDevice"
+	Poller_GetDeviceAvailability_FullMethodName     = "/core.Poller/GetDeviceAvailability"
+	Poller_GetDeviceInformation_FullMethodName      = "/core.Poller/GetDeviceInformation"
+	Poller_GetBasicDeviceInformation_FullMethodName = "/core.Poller/GetBasicDeviceInformation"
+	Poller_GetPortInformation_FullMethodName        = "/core.Poller/GetPortInformation"
+	Poller_GetBasicPortInformation_FullMethodName   = "/core.Poller/GetBasicPortInformation"
+	Poller_GetBasicPortsInformation_FullMethodName  = "/core.Poller/GetBasicPortsInformation"
+	Poller_GetRunningConfiguration_FullMethodName   = "/core.Poller/GetRunningConfiguration"
+	Poller_GetDeviceNeighbors_FullMethodName        = "/core.Poller/GetDeviceNeighbors"
 )
 
 // PollerClient is the client API for Poller service.
@@ -688,20 +688,20 @@ type PollerClient interface {
 	ListTerminals(ctx context.Context, in *ListTerminalsRequest, opts ...grpc.CallOption) (*ListTerminalsResponse, error)
 	// Get a singel temrinal by its ID
 	GetTerminal(ctx context.Context, in *GetTerminalRequest, opts ...grpc.CallOption) (*TerminalSession, error)
-	// Discover is used to get basic information about an network element, used to make a quick check of the device
+	// DiscoverDevice is used to get basic information about an network element, used to make a quick check of the device
 	// using the generic resource plugin to make request through resource.GetDeiceInformation
-	Discover(ctx context.Context, in *DiscoverRequest, opts ...grpc.CallOption) (*DiscoverResponse, error)
-	// CheckAvailability is used to check if a network element is available and responding to requests
+	DiscoverDevice(ctx context.Context, in *DiscoverDeviceRequest, opts ...grpc.CallOption) (*DiscoverDeviceResponse, error)
+	// GetDeviceAvailability is used to check if a network element is available and responding to requests
 	// this does not imply that the network element is working correctly or that it is configured correctly but
 	// that it is responding to requests and that the poller can connect to it over SNMP/ICMP
 	// the availability also verifys checking that hostname is resolvable (if hostname is used in the request)
-	CheckAvailability(ctx context.Context, in *CheckAvailabilityRequest, opts ...grpc.CallOption) (*CheckAvailabilityResponse, error)
+	GetDeviceAvailability(ctx context.Context, in *GetDeviceAvailabilityRequest, opts ...grpc.CallOption) (*GetDeviceAvailabilityResponse, error)
 	// GetDeviceInformation returns the technical information about a device
 	// port etc is not considered in this request
-	DeviceInformation(ctx context.Context, in *DeviceInformationRequest, opts ...grpc.CallOption) (*DeviceInformationResponse, error)
+	GetDeviceInformation(ctx context.Context, in *GetDeviceInformationRequest, opts ...grpc.CallOption) (*GetDeviceInformationResponse, error)
 	// get basic information about a device
 	// port etc is not considered in this request
-	BasicDeviceInformation(ctx context.Context, in *BasicDeviceInformationRequest, opts ...grpc.CallOption) (*DeviceInformationResponse, error)
+	GetBasicDeviceInformation(ctx context.Context, in *GetBasicDeviceInformationRequest, opts ...grpc.CallOption) (*GetDeviceInformationResponse, error)
 	// Get port information about a Port. This should be used to get the full configuration of the port
 	// or logging in thourgh ssh/telnet and running commands
 	//
@@ -715,8 +715,8 @@ type PollerClient interface {
 	//   - ACL / QoS
 	//   - DHCP Table
 	//   - MAC Table
-	PortInformation(ctx context.Context, in *PortInformationRequest, opts ...grpc.CallOption) (*PortInformationResponse, error)
-	// BasicPortInformation returns information about a port on a device. This should only take a few seconds to return
+	GetPortInformation(ctx context.Context, in *GetPortInformationRequest, opts ...grpc.CallOption) (*GetPortInformationResponse, error)
+	// GetBasicPortInformation returns information about a port on a device. This should only take a few seconds to return
 	// so it can be used to get a quick overview of the port. This should not be used to get
 	// the full configuration of the port or logging in thourgh ssh/telnet and running commands
 	//
@@ -732,12 +732,12 @@ type PollerClient interface {
 	//
 	//     BasicPortsInformation returns information about all ports on a device. This should only take a few seconds longer
 	//     to return.
-	BasicPortInformation(ctx context.Context, in *BasicPortInformationRequest, opts ...grpc.CallOption) (*PortInformationResponse, error)
-	BasicPortsInformation(ctx context.Context, in *BasicPortsInformationRequest, opts ...grpc.CallOption) (*PortsInformationResponse, error)
+	GetBasicPortInformation(ctx context.Context, in *GetBasicPortInformationRequest, opts ...grpc.CallOption) (*GetPortInformationResponse, error)
+	GetBasicPortsInformation(ctx context.Context, in *GetBasicPortsInformationRequest, opts ...grpc.CallOption) (*GetPortsInformationResponse, error)
 	// RunningConfiguration collects the configuration of a network element check for any changes between the stored config and the
 	// collected one. Returs a list of changes and the config collected from the network element
-	RunningConfiguration(ctx context.Context, in *RunningConfigurationRequest, opts ...grpc.CallOption) (*RunningConfigurationResponse, error)
-	Neighbours(ctx context.Context, in *NeighboursRequest, opts ...grpc.CallOption) (*NeighboursResponse, error)
+	GetRunningConfiguration(ctx context.Context, in *GetRunningConfigurationRequest, opts ...grpc.CallOption) (*GetRunningConfigurationResponse, error)
+	GetDeviceNeighbors(ctx context.Context, in *GetDeviceNeighborsRequest, opts ...grpc.CallOption) (*GetDeviceNeighborsResponse, error)
 }
 
 type pollerClient struct {
@@ -806,81 +806,81 @@ func (c *pollerClient) GetTerminal(ctx context.Context, in *GetTerminalRequest, 
 	return out, nil
 }
 
-func (c *pollerClient) Discover(ctx context.Context, in *DiscoverRequest, opts ...grpc.CallOption) (*DiscoverResponse, error) {
-	out := new(DiscoverResponse)
-	err := c.cc.Invoke(ctx, Poller_Discover_FullMethodName, in, out, opts...)
+func (c *pollerClient) DiscoverDevice(ctx context.Context, in *DiscoverDeviceRequest, opts ...grpc.CallOption) (*DiscoverDeviceResponse, error) {
+	out := new(DiscoverDeviceResponse)
+	err := c.cc.Invoke(ctx, Poller_DiscoverDevice_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pollerClient) CheckAvailability(ctx context.Context, in *CheckAvailabilityRequest, opts ...grpc.CallOption) (*CheckAvailabilityResponse, error) {
-	out := new(CheckAvailabilityResponse)
-	err := c.cc.Invoke(ctx, Poller_CheckAvailability_FullMethodName, in, out, opts...)
+func (c *pollerClient) GetDeviceAvailability(ctx context.Context, in *GetDeviceAvailabilityRequest, opts ...grpc.CallOption) (*GetDeviceAvailabilityResponse, error) {
+	out := new(GetDeviceAvailabilityResponse)
+	err := c.cc.Invoke(ctx, Poller_GetDeviceAvailability_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pollerClient) DeviceInformation(ctx context.Context, in *DeviceInformationRequest, opts ...grpc.CallOption) (*DeviceInformationResponse, error) {
-	out := new(DeviceInformationResponse)
-	err := c.cc.Invoke(ctx, Poller_DeviceInformation_FullMethodName, in, out, opts...)
+func (c *pollerClient) GetDeviceInformation(ctx context.Context, in *GetDeviceInformationRequest, opts ...grpc.CallOption) (*GetDeviceInformationResponse, error) {
+	out := new(GetDeviceInformationResponse)
+	err := c.cc.Invoke(ctx, Poller_GetDeviceInformation_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pollerClient) BasicDeviceInformation(ctx context.Context, in *BasicDeviceInformationRequest, opts ...grpc.CallOption) (*DeviceInformationResponse, error) {
-	out := new(DeviceInformationResponse)
-	err := c.cc.Invoke(ctx, Poller_BasicDeviceInformation_FullMethodName, in, out, opts...)
+func (c *pollerClient) GetBasicDeviceInformation(ctx context.Context, in *GetBasicDeviceInformationRequest, opts ...grpc.CallOption) (*GetDeviceInformationResponse, error) {
+	out := new(GetDeviceInformationResponse)
+	err := c.cc.Invoke(ctx, Poller_GetBasicDeviceInformation_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pollerClient) PortInformation(ctx context.Context, in *PortInformationRequest, opts ...grpc.CallOption) (*PortInformationResponse, error) {
-	out := new(PortInformationResponse)
-	err := c.cc.Invoke(ctx, Poller_PortInformation_FullMethodName, in, out, opts...)
+func (c *pollerClient) GetPortInformation(ctx context.Context, in *GetPortInformationRequest, opts ...grpc.CallOption) (*GetPortInformationResponse, error) {
+	out := new(GetPortInformationResponse)
+	err := c.cc.Invoke(ctx, Poller_GetPortInformation_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pollerClient) BasicPortInformation(ctx context.Context, in *BasicPortInformationRequest, opts ...grpc.CallOption) (*PortInformationResponse, error) {
-	out := new(PortInformationResponse)
-	err := c.cc.Invoke(ctx, Poller_BasicPortInformation_FullMethodName, in, out, opts...)
+func (c *pollerClient) GetBasicPortInformation(ctx context.Context, in *GetBasicPortInformationRequest, opts ...grpc.CallOption) (*GetPortInformationResponse, error) {
+	out := new(GetPortInformationResponse)
+	err := c.cc.Invoke(ctx, Poller_GetBasicPortInformation_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pollerClient) BasicPortsInformation(ctx context.Context, in *BasicPortsInformationRequest, opts ...grpc.CallOption) (*PortsInformationResponse, error) {
-	out := new(PortsInformationResponse)
-	err := c.cc.Invoke(ctx, Poller_BasicPortsInformation_FullMethodName, in, out, opts...)
+func (c *pollerClient) GetBasicPortsInformation(ctx context.Context, in *GetBasicPortsInformationRequest, opts ...grpc.CallOption) (*GetPortsInformationResponse, error) {
+	out := new(GetPortsInformationResponse)
+	err := c.cc.Invoke(ctx, Poller_GetBasicPortsInformation_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pollerClient) RunningConfiguration(ctx context.Context, in *RunningConfigurationRequest, opts ...grpc.CallOption) (*RunningConfigurationResponse, error) {
-	out := new(RunningConfigurationResponse)
-	err := c.cc.Invoke(ctx, Poller_RunningConfiguration_FullMethodName, in, out, opts...)
+func (c *pollerClient) GetRunningConfiguration(ctx context.Context, in *GetRunningConfigurationRequest, opts ...grpc.CallOption) (*GetRunningConfigurationResponse, error) {
+	out := new(GetRunningConfigurationResponse)
+	err := c.cc.Invoke(ctx, Poller_GetRunningConfiguration_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *pollerClient) Neighbours(ctx context.Context, in *NeighboursRequest, opts ...grpc.CallOption) (*NeighboursResponse, error) {
-	out := new(NeighboursResponse)
-	err := c.cc.Invoke(ctx, Poller_Neighbours_FullMethodName, in, out, opts...)
+func (c *pollerClient) GetDeviceNeighbors(ctx context.Context, in *GetDeviceNeighborsRequest, opts ...grpc.CallOption) (*GetDeviceNeighborsResponse, error) {
+	out := new(GetDeviceNeighborsResponse)
+	err := c.cc.Invoke(ctx, Poller_GetDeviceNeighbors_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -904,20 +904,20 @@ type PollerServer interface {
 	ListTerminals(context.Context, *ListTerminalsRequest) (*ListTerminalsResponse, error)
 	// Get a singel temrinal by its ID
 	GetTerminal(context.Context, *GetTerminalRequest) (*TerminalSession, error)
-	// Discover is used to get basic information about an network element, used to make a quick check of the device
+	// DiscoverDevice is used to get basic information about an network element, used to make a quick check of the device
 	// using the generic resource plugin to make request through resource.GetDeiceInformation
-	Discover(context.Context, *DiscoverRequest) (*DiscoverResponse, error)
-	// CheckAvailability is used to check if a network element is available and responding to requests
+	DiscoverDevice(context.Context, *DiscoverDeviceRequest) (*DiscoverDeviceResponse, error)
+	// GetDeviceAvailability is used to check if a network element is available and responding to requests
 	// this does not imply that the network element is working correctly or that it is configured correctly but
 	// that it is responding to requests and that the poller can connect to it over SNMP/ICMP
 	// the availability also verifys checking that hostname is resolvable (if hostname is used in the request)
-	CheckAvailability(context.Context, *CheckAvailabilityRequest) (*CheckAvailabilityResponse, error)
+	GetDeviceAvailability(context.Context, *GetDeviceAvailabilityRequest) (*GetDeviceAvailabilityResponse, error)
 	// GetDeviceInformation returns the technical information about a device
 	// port etc is not considered in this request
-	DeviceInformation(context.Context, *DeviceInformationRequest) (*DeviceInformationResponse, error)
+	GetDeviceInformation(context.Context, *GetDeviceInformationRequest) (*GetDeviceInformationResponse, error)
 	// get basic information about a device
 	// port etc is not considered in this request
-	BasicDeviceInformation(context.Context, *BasicDeviceInformationRequest) (*DeviceInformationResponse, error)
+	GetBasicDeviceInformation(context.Context, *GetBasicDeviceInformationRequest) (*GetDeviceInformationResponse, error)
 	// Get port information about a Port. This should be used to get the full configuration of the port
 	// or logging in thourgh ssh/telnet and running commands
 	//
@@ -931,8 +931,8 @@ type PollerServer interface {
 	//   - ACL / QoS
 	//   - DHCP Table
 	//   - MAC Table
-	PortInformation(context.Context, *PortInformationRequest) (*PortInformationResponse, error)
-	// BasicPortInformation returns information about a port on a device. This should only take a few seconds to return
+	GetPortInformation(context.Context, *GetPortInformationRequest) (*GetPortInformationResponse, error)
+	// GetBasicPortInformation returns information about a port on a device. This should only take a few seconds to return
 	// so it can be used to get a quick overview of the port. This should not be used to get
 	// the full configuration of the port or logging in thourgh ssh/telnet and running commands
 	//
@@ -948,12 +948,12 @@ type PollerServer interface {
 	//
 	//     BasicPortsInformation returns information about all ports on a device. This should only take a few seconds longer
 	//     to return.
-	BasicPortInformation(context.Context, *BasicPortInformationRequest) (*PortInformationResponse, error)
-	BasicPortsInformation(context.Context, *BasicPortsInformationRequest) (*PortsInformationResponse, error)
+	GetBasicPortInformation(context.Context, *GetBasicPortInformationRequest) (*GetPortInformationResponse, error)
+	GetBasicPortsInformation(context.Context, *GetBasicPortsInformationRequest) (*GetPortsInformationResponse, error)
 	// RunningConfiguration collects the configuration of a network element check for any changes between the stored config and the
 	// collected one. Returs a list of changes and the config collected from the network element
-	RunningConfiguration(context.Context, *RunningConfigurationRequest) (*RunningConfigurationResponse, error)
-	Neighbours(context.Context, *NeighboursRequest) (*NeighboursResponse, error)
+	GetRunningConfiguration(context.Context, *GetRunningConfigurationRequest) (*GetRunningConfigurationResponse, error)
+	GetDeviceNeighbors(context.Context, *GetDeviceNeighborsRequest) (*GetDeviceNeighborsResponse, error)
 }
 
 // UnimplementedPollerServer should be embedded to have forward compatible implementations.
@@ -972,32 +972,32 @@ func (UnimplementedPollerServer) ListTerminals(context.Context, *ListTerminalsRe
 func (UnimplementedPollerServer) GetTerminal(context.Context, *GetTerminalRequest) (*TerminalSession, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTerminal not implemented")
 }
-func (UnimplementedPollerServer) Discover(context.Context, *DiscoverRequest) (*DiscoverResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Discover not implemented")
+func (UnimplementedPollerServer) DiscoverDevice(context.Context, *DiscoverDeviceRequest) (*DiscoverDeviceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DiscoverDevice not implemented")
 }
-func (UnimplementedPollerServer) CheckAvailability(context.Context, *CheckAvailabilityRequest) (*CheckAvailabilityResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CheckAvailability not implemented")
+func (UnimplementedPollerServer) GetDeviceAvailability(context.Context, *GetDeviceAvailabilityRequest) (*GetDeviceAvailabilityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDeviceAvailability not implemented")
 }
-func (UnimplementedPollerServer) DeviceInformation(context.Context, *DeviceInformationRequest) (*DeviceInformationResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeviceInformation not implemented")
+func (UnimplementedPollerServer) GetDeviceInformation(context.Context, *GetDeviceInformationRequest) (*GetDeviceInformationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDeviceInformation not implemented")
 }
-func (UnimplementedPollerServer) BasicDeviceInformation(context.Context, *BasicDeviceInformationRequest) (*DeviceInformationResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BasicDeviceInformation not implemented")
+func (UnimplementedPollerServer) GetBasicDeviceInformation(context.Context, *GetBasicDeviceInformationRequest) (*GetDeviceInformationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBasicDeviceInformation not implemented")
 }
-func (UnimplementedPollerServer) PortInformation(context.Context, *PortInformationRequest) (*PortInformationResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PortInformation not implemented")
+func (UnimplementedPollerServer) GetPortInformation(context.Context, *GetPortInformationRequest) (*GetPortInformationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPortInformation not implemented")
 }
-func (UnimplementedPollerServer) BasicPortInformation(context.Context, *BasicPortInformationRequest) (*PortInformationResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BasicPortInformation not implemented")
+func (UnimplementedPollerServer) GetBasicPortInformation(context.Context, *GetBasicPortInformationRequest) (*GetPortInformationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBasicPortInformation not implemented")
 }
-func (UnimplementedPollerServer) BasicPortsInformation(context.Context, *BasicPortsInformationRequest) (*PortsInformationResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BasicPortsInformation not implemented")
+func (UnimplementedPollerServer) GetBasicPortsInformation(context.Context, *GetBasicPortsInformationRequest) (*GetPortsInformationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBasicPortsInformation not implemented")
 }
-func (UnimplementedPollerServer) RunningConfiguration(context.Context, *RunningConfigurationRequest) (*RunningConfigurationResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RunningConfiguration not implemented")
+func (UnimplementedPollerServer) GetRunningConfiguration(context.Context, *GetRunningConfigurationRequest) (*GetRunningConfigurationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRunningConfiguration not implemented")
 }
-func (UnimplementedPollerServer) Neighbours(context.Context, *NeighboursRequest) (*NeighboursResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Neighbours not implemented")
+func (UnimplementedPollerServer) GetDeviceNeighbors(context.Context, *GetDeviceNeighborsRequest) (*GetDeviceNeighborsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDeviceNeighbors not implemented")
 }
 
 // UnsafePollerServer may be embedded to opt out of forward compatibility for this service.
@@ -1091,164 +1091,164 @@ func _Poller_GetTerminal_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Poller_Discover_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DiscoverRequest)
+func _Poller_DiscoverDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DiscoverDeviceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PollerServer).Discover(ctx, in)
+		return srv.(PollerServer).DiscoverDevice(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Poller_Discover_FullMethodName,
+		FullMethod: Poller_DiscoverDevice_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PollerServer).Discover(ctx, req.(*DiscoverRequest))
+		return srv.(PollerServer).DiscoverDevice(ctx, req.(*DiscoverDeviceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Poller_CheckAvailability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CheckAvailabilityRequest)
+func _Poller_GetDeviceAvailability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDeviceAvailabilityRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PollerServer).CheckAvailability(ctx, in)
+		return srv.(PollerServer).GetDeviceAvailability(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Poller_CheckAvailability_FullMethodName,
+		FullMethod: Poller_GetDeviceAvailability_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PollerServer).CheckAvailability(ctx, req.(*CheckAvailabilityRequest))
+		return srv.(PollerServer).GetDeviceAvailability(ctx, req.(*GetDeviceAvailabilityRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Poller_DeviceInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeviceInformationRequest)
+func _Poller_GetDeviceInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDeviceInformationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PollerServer).DeviceInformation(ctx, in)
+		return srv.(PollerServer).GetDeviceInformation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Poller_DeviceInformation_FullMethodName,
+		FullMethod: Poller_GetDeviceInformation_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PollerServer).DeviceInformation(ctx, req.(*DeviceInformationRequest))
+		return srv.(PollerServer).GetDeviceInformation(ctx, req.(*GetDeviceInformationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Poller_BasicDeviceInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BasicDeviceInformationRequest)
+func _Poller_GetBasicDeviceInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBasicDeviceInformationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PollerServer).BasicDeviceInformation(ctx, in)
+		return srv.(PollerServer).GetBasicDeviceInformation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Poller_BasicDeviceInformation_FullMethodName,
+		FullMethod: Poller_GetBasicDeviceInformation_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PollerServer).BasicDeviceInformation(ctx, req.(*BasicDeviceInformationRequest))
+		return srv.(PollerServer).GetBasicDeviceInformation(ctx, req.(*GetBasicDeviceInformationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Poller_PortInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PortInformationRequest)
+func _Poller_GetPortInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPortInformationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PollerServer).PortInformation(ctx, in)
+		return srv.(PollerServer).GetPortInformation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Poller_PortInformation_FullMethodName,
+		FullMethod: Poller_GetPortInformation_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PollerServer).PortInformation(ctx, req.(*PortInformationRequest))
+		return srv.(PollerServer).GetPortInformation(ctx, req.(*GetPortInformationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Poller_BasicPortInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BasicPortInformationRequest)
+func _Poller_GetBasicPortInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBasicPortInformationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PollerServer).BasicPortInformation(ctx, in)
+		return srv.(PollerServer).GetBasicPortInformation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Poller_BasicPortInformation_FullMethodName,
+		FullMethod: Poller_GetBasicPortInformation_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PollerServer).BasicPortInformation(ctx, req.(*BasicPortInformationRequest))
+		return srv.(PollerServer).GetBasicPortInformation(ctx, req.(*GetBasicPortInformationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Poller_BasicPortsInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BasicPortsInformationRequest)
+func _Poller_GetBasicPortsInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBasicPortsInformationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PollerServer).BasicPortsInformation(ctx, in)
+		return srv.(PollerServer).GetBasicPortsInformation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Poller_BasicPortsInformation_FullMethodName,
+		FullMethod: Poller_GetBasicPortsInformation_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PollerServer).BasicPortsInformation(ctx, req.(*BasicPortsInformationRequest))
+		return srv.(PollerServer).GetBasicPortsInformation(ctx, req.(*GetBasicPortsInformationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Poller_RunningConfiguration_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RunningConfigurationRequest)
+func _Poller_GetRunningConfiguration_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRunningConfigurationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PollerServer).RunningConfiguration(ctx, in)
+		return srv.(PollerServer).GetRunningConfiguration(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Poller_RunningConfiguration_FullMethodName,
+		FullMethod: Poller_GetRunningConfiguration_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PollerServer).RunningConfiguration(ctx, req.(*RunningConfigurationRequest))
+		return srv.(PollerServer).GetRunningConfiguration(ctx, req.(*GetRunningConfigurationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Poller_Neighbours_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NeighboursRequest)
+func _Poller_GetDeviceNeighbors_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDeviceNeighborsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PollerServer).Neighbours(ctx, in)
+		return srv.(PollerServer).GetDeviceNeighbors(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Poller_Neighbours_FullMethodName,
+		FullMethod: Poller_GetDeviceNeighbors_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PollerServer).Neighbours(ctx, req.(*NeighboursRequest))
+		return srv.(PollerServer).GetDeviceNeighbors(ctx, req.(*GetDeviceNeighborsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1273,40 +1273,40 @@ var Poller_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Poller_GetTerminal_Handler,
 		},
 		{
-			MethodName: "Discover",
-			Handler:    _Poller_Discover_Handler,
+			MethodName: "DiscoverDevice",
+			Handler:    _Poller_DiscoverDevice_Handler,
 		},
 		{
-			MethodName: "CheckAvailability",
-			Handler:    _Poller_CheckAvailability_Handler,
+			MethodName: "GetDeviceAvailability",
+			Handler:    _Poller_GetDeviceAvailability_Handler,
 		},
 		{
-			MethodName: "DeviceInformation",
-			Handler:    _Poller_DeviceInformation_Handler,
+			MethodName: "GetDeviceInformation",
+			Handler:    _Poller_GetDeviceInformation_Handler,
 		},
 		{
-			MethodName: "BasicDeviceInformation",
-			Handler:    _Poller_BasicDeviceInformation_Handler,
+			MethodName: "GetBasicDeviceInformation",
+			Handler:    _Poller_GetBasicDeviceInformation_Handler,
 		},
 		{
-			MethodName: "PortInformation",
-			Handler:    _Poller_PortInformation_Handler,
+			MethodName: "GetPortInformation",
+			Handler:    _Poller_GetPortInformation_Handler,
 		},
 		{
-			MethodName: "BasicPortInformation",
-			Handler:    _Poller_BasicPortInformation_Handler,
+			MethodName: "GetBasicPortInformation",
+			Handler:    _Poller_GetBasicPortInformation_Handler,
 		},
 		{
-			MethodName: "BasicPortsInformation",
-			Handler:    _Poller_BasicPortsInformation_Handler,
+			MethodName: "GetBasicPortsInformation",
+			Handler:    _Poller_GetBasicPortsInformation_Handler,
 		},
 		{
-			MethodName: "RunningConfiguration",
-			Handler:    _Poller_RunningConfiguration_Handler,
+			MethodName: "GetRunningConfiguration",
+			Handler:    _Poller_GetRunningConfiguration_Handler,
 		},
 		{
-			MethodName: "Neighbours",
-			Handler:    _Poller_Neighbours_Handler,
+			MethodName: "GetDeviceNeighbors",
+			Handler:    _Poller_GetDeviceNeighbors_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
